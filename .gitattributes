@@ -1,0 +1,35 @@
+# 모든 텍스트 파일은 LF로 통일
+* text=auto eol=lf
+
+# 스크립트 파일
+/gradlew text eol=lf
+*.bat text eol=crlf
+
+# Kotlin/Java
+*.kt text diff=kotlin
+*.kts text diff=kotlin
+*.java text diff=java
+*.gradle text
+*.gradle.kts text
+
+# Docs
+*.md text diff=markdown
+*.txt text
+*.yml text
+*.yaml text
+*.json text
+
+# 바이너리 파일은 diff 제외
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.jar binary
+*.zip binary
+*.mp4 binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
