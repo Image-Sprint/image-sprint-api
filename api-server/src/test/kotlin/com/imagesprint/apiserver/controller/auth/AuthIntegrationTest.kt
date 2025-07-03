@@ -1,5 +1,3 @@
-@file:Suppress("ktlint:standard:no-wildcard-imports")
-
 package com.imagesprint.apiserver.controller.auth
 
 import com.imagesprint.apiserver.support.SocialAuthMockConfig
@@ -10,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
-import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -18,8 +16,8 @@ import kotlin.test.Test
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(locations = ["classpath:application-test.yml"])
 @Import(SocialAuthMockConfig::class)
+@ActiveProfiles("test")
 class AuthIntegrationTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
