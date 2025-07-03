@@ -1,7 +1,7 @@
 package com.imagesprint.apiserver.controller.auth.dto
 
 import com.imagesprint.core.domain.user.SocialProvider
-import com.imagesprint.core.port.`in`.user.SocialAuthCommand
+import com.imagesprint.core.port.input.user.SocialAuthCommand
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 
@@ -10,13 +10,12 @@ data class SocialLoginRequest(
     val authorizationCode: String,
     @field:NotNull(message = "provider는 필수입니다.")
     val provider: SocialProvider,
-    val state: String?
+    val state: String?,
 ) {
-    fun toCommand(): SocialAuthCommand {
-        return SocialAuthCommand(
+    fun toCommand(): SocialAuthCommand =
+        SocialAuthCommand(
             authorizationCode = this.authorizationCode,
             provider = this.provider,
-            state = this.state
+            state = this.state,
         )
-    }
 }

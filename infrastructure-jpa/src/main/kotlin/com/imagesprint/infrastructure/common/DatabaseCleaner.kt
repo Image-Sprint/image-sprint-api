@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 class DatabaseCleaner {
-
     @PersistenceContext
     private lateinit var entityManager: EntityManager
 
@@ -16,18 +15,14 @@ class DatabaseCleaner {
         entityManager.flush()
         entityManager.clear()
 
-        // 외래 키 무시
-        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate()
-
-        // 테이블 목록 조회 (MySQL 기준)
-        val tableNames = entityManager.createNativeQuery(
-            "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()"
-        ).resultList
+        val tableNames =
+            entityManager
+                .createNativeQuery(
+                    "SELECT table_name FROM information_schema.tables WHERE table_schema = 'PUBLIC'",
+                ).resultList as List<String>
 
         tableNames.forEach { tableName ->
-            entityManager.createNativeQuery("TRUNCATE TABLE `$tableName`").executeUpdate()
+            entityManager.createNativeQuery("DELETE FROM \"$tableName\"").executeUpdate()
         }
-
-        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate()
     }
 }
