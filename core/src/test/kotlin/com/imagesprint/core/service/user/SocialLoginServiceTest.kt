@@ -54,7 +54,7 @@ class SocialLoginServiceTest {
                 "test@example.com",
                 SocialProvider.NAVER
             )
-        } returns null // ✅ 여기를 수정!
+        } returns null
         every { userRepository.save(any()) } returns savedUser
         every { tokenProvider.generateAccessToken(1L, "NAVER") } returns "access-token"
         every { tokenProvider.generateRefreshToken(1L, "NAVER") } returns "refresh-token"
@@ -99,5 +99,4 @@ class SocialLoginServiceTest {
         verify(exactly = 0) { userRepository.save(any()) }
         verify { refreshTokenStore.save(1L, "refresh-token") }
     }
-
 }
