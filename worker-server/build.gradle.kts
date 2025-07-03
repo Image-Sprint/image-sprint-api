@@ -22,7 +22,7 @@ dependencies {
     // 내부 모듈
     implementation(project(":core"))
     implementation(project(":common"))
-    implementation(project(":infrastructure"))
+    implementation(project(":infrastructure-r2dbc"))
 
     // 기본 Spring Boot
     implementation("org.springframework.boot:spring-boot-starter")
