@@ -7,14 +7,14 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class UserRepositoryImpl(
-    private val userJpaRepository: UserJpaRepository
+    private val userJpaRepository: UserJpaRepository,
 ) : UserRepository {
+    override fun findBySocialIdentity(
+        email: String,
+        provider: SocialProvider,
+    ): User? = userJpaRepository.findByEmailAndProvider(email, provider)?.toDomain()
 
-    override fun findBySocialIdentity(email: String, provider: SocialProvider): User? {
-        return userJpaRepository.findByEmailAndProvider(email, provider)?.toDomain()
-    }
+    override fun getUser(userId: Long): User? = userJpaRepository.findByUserId(userId)?.toDomain()
 
-    override fun save(user: User): User {
-        return userJpaRepository.save(UserEntity.fromDomain(user)).toDomain()
-    }
+    override fun save(user: User): User = userJpaRepository.save(UserEntity.fromDomain(user)).toDomain()
 }
