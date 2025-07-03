@@ -1,4 +1,4 @@
-package com.apiserver
+package com.imagesprint
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class ApiServerApplication
 
 fun main(args: Array<String>) {
-	runApplication<ApiServerApplication>(*args)
+    runApplication<ApiServerApplication>(*args)
 }

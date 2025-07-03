@@ -1,4 +1,18 @@
+# common
 spring:
+  application:
+    name: Image-Sprint
+  profiles:
+    default: local
+    include: secret
+server:
+  port: 8080
+---
+# local profile
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     url: jdbc:mysql://localhost:23306/image_sprint
     username: root
@@ -15,4 +29,52 @@ spring:
 
 logging:
   level:
+    org.springframework: info
     org.hibernate.SQL: debug
+    io.r2dbc: debug
+
+---
+# dev 환경
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+logging:
+  level:
+    root: info
+
+---
+# worker 환경
+spring:
+  config:
+    activate:
+      on-profile: worker
+
+  r2dbc:
+    url: r2dbc:mysql://localhost:23306/image_sprint
+    username: root
+    password: 1234
+    pool:
+      enabled: true
+      max-size: 10
+      initial-size: 2
+
+  sql:
+    init:
+      mode: never
+
+logging:
+  level:
+    io.r2dbc: debug

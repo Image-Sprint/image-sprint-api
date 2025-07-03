@@ -1,9 +1,20 @@
-package com.workerserver
+package com.imagesprint
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.FilterType
 
 @SpringBootApplication
+@ComponentScan(
+    basePackages = ["com.imagesprint"],
+    excludeFilters = [
+        ComponentScan.Filter(
+            type = FilterType.REGEX,
+            pattern = ["com\\.imagesprint\\.core\\.service\\.user\\..*"]
+        )
+    ]
+)
 class WorkerServerApplication
 
 fun main(args: Array<String>) {
