@@ -1,4 +1,4 @@
-package com.imagesprint.core.port.out.user
+package com.imagesprint.core.port.output.user
 
 import com.imagesprint.core.domain.user.SocialProvider
 

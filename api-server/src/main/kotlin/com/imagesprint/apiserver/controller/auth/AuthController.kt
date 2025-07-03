@@ -5,7 +5,7 @@ import com.imagesprint.apiserver.controller.auth.dto.SocialLoginResponse
 import com.imagesprint.apiserver.controller.common.ApiResultResponse
 import com.imagesprint.apiserver.controller.common.ApiVersions
 import com.imagesprint.apiserver.controller.common.BaseController
-import com.imagesprint.core.port.`in`.user.SocialLoginUseCase
+import com.imagesprint.core.port.input.user.SocialLoginUseCase
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseCookie
@@ -17,21 +17,25 @@ import java.time.Duration
 
 @RestController
 @RequestMapping("${ApiVersions.V1}/auth")
-class AuthController(private val socialLoginUseCase: SocialLoginUseCase) : BaseController() {
-
+class AuthController(
+    private val socialLoginUseCase: SocialLoginUseCase,
+) : BaseController() {
     @PostMapping("/login")
-    fun login(
+    fun loginWithSocial(
         @RequestBody @Valid request: SocialLoginRequest,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ): ApiResultResponse<SocialLoginResponse> {
-        val result = socialLoginUseCase.socialAuthenticate(request.toCommand())
+        val result = socialLoginUseCase.loginWithSocial(request.toCommand())
 
-        val refreshTokenCookie = ResponseCookie.from("refreshToken", result.refreshToken)
-            .httpOnly(true)
-            .secure(true)
-            .path("/")
-            .maxAge(Duration.ofDays(30))
-            .build()
+        val refreshTokenCookie =
+            ResponseCookie
+                .from("refreshToken", result.refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(Duration.ofDays(30))
+                .build()
 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString())
 

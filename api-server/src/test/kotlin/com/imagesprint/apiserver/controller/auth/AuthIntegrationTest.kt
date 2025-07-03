@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package com.imagesprint.apiserver.controller.auth
 
 import com.imagesprint.apiserver.support.SocialAuthMockConfig
@@ -19,7 +21,6 @@ import kotlin.test.Test
 @TestPropertySource(locations = ["classpath:application-test.yml"])
 @Import(SocialAuthMockConfig::class)
 class AuthIntegrationTest {
-
     @Autowired
     private lateinit var mockMvc: MockMvc
 
@@ -33,20 +34,23 @@ class AuthIntegrationTest {
 
     @Test
     fun `로그인 요청 시 accessToken과 쿠키가 반환된다`() {
-        mockMvc.perform(
-            post("/api/v1/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """
-                    {
-                        "authorizationCode": "fake-code",
-                        "provider": "KAKAO",
-                        "state": "test"
-                    }
-                    """.trimIndent()
-                )
-        )
-            .andExpect(status().isOk)
+        // given
+        val requestBody =
+            """
+            {
+                "authorizationCode": "fake-code",
+                "provider": "KAKAO",
+                "state": "test"
+            }
+            """.trimIndent()
+
+        // when & then
+        mockMvc
+            .perform(
+                post("/api/v1/auth/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestBody),
+            ).andExpect(status().isOk)
             .andExpect(jsonPath("$.data.accessToken").isNotEmpty)
             .andExpect(header().exists("Set-Cookie"))
     }
