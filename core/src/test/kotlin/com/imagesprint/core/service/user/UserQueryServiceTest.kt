@@ -1,8 +1,8 @@
 package com.imagesprint.core.service.user
 
-import com.imagesprint.core.domain.user.UserRepository
 import com.imagesprint.core.exception.CustomException
 import com.imagesprint.core.exception.ErrorCode
+import com.imagesprint.core.port.output.user.UserRepository
 import com.imagesprint.core.support.factory.UserTestFactory
 import io.mockk.every
 import io.mockk.mockk
