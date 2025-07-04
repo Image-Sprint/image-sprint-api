@@ -2,7 +2,7 @@ package com.imagesprint.infrastructure.user.persistence
 
 import com.imagesprint.core.domain.user.SocialProvider
 import com.imagesprint.core.domain.user.User
-import com.imagesprint.core.domain.user.UserRepository
+import com.imagesprint.core.port.output.user.UserRepository
 import org.springframework.stereotype.Repository
 
 @Repository

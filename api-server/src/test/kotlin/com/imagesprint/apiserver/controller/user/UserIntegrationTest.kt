@@ -3,7 +3,7 @@ package com.imagesprint.apiserver.controller.user
 import com.imagesprint.apiserver.support.WithMockAuthenticatedUser
 import com.imagesprint.core.domain.user.SocialProvider
 import com.imagesprint.core.domain.user.User
-import com.imagesprint.core.domain.user.UserRepository
+import com.imagesprint.core.port.output.user.UserRepository
 import com.imagesprint.infrastructure.common.DatabaseCleaner
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
