@@ -1,5 +1,6 @@
-package com.imagesprint.apiserver.controller.user
+package com.imagesprint.apiserver.controller
 
+import com.imagesprint.apiserver.controller.user.UserController
 import com.imagesprint.apiserver.support.WithMockAuthenticatedUser
 import com.imagesprint.core.domain.user.SocialProvider
 import com.imagesprint.core.port.input.user.MyProfileResult

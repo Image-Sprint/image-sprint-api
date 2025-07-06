@@ -1,4 +1,4 @@
-package com.imagesprint.apiserver.controller.user
+package com.imagesprint.apiserver.integration
 
 import com.imagesprint.apiserver.support.WithMockAuthenticatedUser
 import com.imagesprint.core.domain.user.SocialProvider
