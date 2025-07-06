@@ -12,10 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.get
 import java.time.LocalDateTime
 import kotlin.test.Test
 
@@ -33,26 +30,28 @@ class UserControllerTest {
 
     @Test
     @WithMockAuthenticatedUser(userId = 123, provider = "KAKAO")
-    fun `유저 정보 조회 시 200 OK와 유저 정보를 반환한다`() {
+    fun `컨트롤러 - 유저 정보 조회 시 200 OK와 유저 정보를 반환한다`() {
         // given
         every { userQueryUseCase.getMyProfile(any()) } returns
             MyProfileResult(
-                1L,
-                "test",
-                "test@test.com",
-                SocialProvider.KAKAO,
-                LocalDateTime.now(),
+                userId = 1L,
+                nickname = "test",
+                email = "test@test.com",
+                provider = SocialProvider.KAKAO,
+                createdAt = LocalDateTime.now(),
             )
 
         // when & then
         mockMvc
-            .perform(
-                get("/api/v1/users/me")
-                    .contentType(MediaType.APPLICATION_JSON),
-            ).andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.userId").value(1L))
-            .andExpect(jsonPath("$.data.nickname").value("test"))
-            .andExpect(jsonPath("$.data.email").value("test@test.com"))
-            .andDo(print())
+            .get("/api/v1/users/me") {
+                contentType = MediaType.APPLICATION_JSON
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.data.userId") { value(1L) }
+                jsonPath("$.data.nickname") { value("test") }
+                jsonPath("$.data.email") { value("test@test.com") }
+            }.andDo {
+                print()
+            }
     }
 }

@@ -42,7 +42,7 @@ class SocialLoginServiceTest {
     }
 
     @Test
-    fun `유저가 존재하지 않을 경우, 유저를 저장하고 로그인 처리된다`() {
+    fun `단위 - 유저가 존재하지 않을 경우, 유저를 저장하고 로그인 처리된다`() {
         // given
         val command = SocialAuthCommand("auth-code", SocialProvider.NAVER, "state")
         val socialUserInfo = SocialUserInfo(email = "test@example.com", nickname = "테스트")
@@ -81,7 +81,7 @@ class SocialLoginServiceTest {
     }
 
     @Test
-    fun `이미 존재하는 유저일 경우, 저장하지 않고 로그인 처리된다`() {
+    fun `단위 - 이미 존재하는 유저일 경우, 저장하지 않고 로그인 처리된다`() {
         // given
         val command = SocialAuthCommand("auth-code", SocialProvider.KAKAO, "state")
         val socialUserInfo = SocialUserInfo(email = "test@example.com", nickname = "테스트")

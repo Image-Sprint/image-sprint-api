@@ -1,5 +1,6 @@
 package com.imagesprint.apiserver.exception
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.imagesprint.apiserver.controller.common.ApiResultResponse
 import com.imagesprint.apiserver.controller.common.BaseController
 import com.imagesprint.core.exception.CustomException
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 @ResponseStatus(HttpStatus.OK)
 class GlobalExceptionHandler : BaseController() {
-
     private val log = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
 
     @Value("\${spring.profiles.active:}")
@@ -22,7 +22,18 @@ class GlobalExceptionHandler : BaseController() {
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidation(e: MethodArgumentNotValidException): ApiResultResponse<Nothing?> {
-        val msg = e.bindingResult.allErrors.firstOrNull()?.defaultMessage ?: "잘못된 요청입니다."
+        val msg =
+            e.bindingResult.allErrors
+                .firstOrNull()
+                ?.defaultMessage ?: "잘못된 요청입니다."
+        log.warn("Validation 실패: {}", msg)
+
+        return fail(msg)
+    }
+
+    @ExceptionHandler(InvalidFormatException::class)
+    fun handleInvalidFormatException(e: InvalidFormatException): ApiResultResponse<Nothing?> {
+        val msg = "잘못된 enum 값입니다: %s".format(e.message)
         log.warn("Validation 실패: {}", msg)
 
         return fail(msg)
@@ -36,7 +47,6 @@ class GlobalExceptionHandler : BaseController() {
 
         return fail(status, errorCode.message)
     }
-
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception::class)
