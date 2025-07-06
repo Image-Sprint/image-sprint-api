@@ -1,6 +1,6 @@
 package com.imagesprint.core.domain.user
 
-enum class SocialProvider() {
+enum class SocialProvider {
     KAKAO,
-    NAVER
+    NAVER,
 }

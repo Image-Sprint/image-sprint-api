@@ -7,17 +7,19 @@ import org.springframework.http.HttpStatus
  * ApiResultResponse 응답을 간결하게 만들어줌.
  */
 abstract class BaseController {
-    protected fun <T> ok(data: T): ApiResultResponse<T> =
-        ApiResultResponse.of(HttpStatus.OK, true, data)
+    protected fun <T> ok(data: T): ApiResultResponse<T> = ApiResultResponse.of(HttpStatus.OK, true, data)
 
-    protected fun <T> success(message: String, data: T?): ApiResultResponse<T> =
-        ApiResultResponse.of(HttpStatus.OK, true, message, data)
+    protected fun <T> success(
+        message: String,
+        data: T?,
+    ): ApiResultResponse<T> = ApiResultResponse.of(HttpStatus.OK, true, message, data)
 
-    protected fun fail(message: String): ApiResultResponse<Nothing?> =
-        ApiResultResponse.of(HttpStatus.BAD_REQUEST, false, message, null)
+    protected fun fail(message: String): ApiResultResponse<Nothing?> = ApiResultResponse.of(HttpStatus.BAD_REQUEST, false, message, null)
 
-    protected fun fail(code: HttpStatus, message: String): ApiResultResponse<Nothing?> =
-        ApiResultResponse.of(code, false, message, null)
+    protected fun fail(
+        code: HttpStatus,
+        message: String,
+    ): ApiResultResponse<Nothing?> = ApiResultResponse.of(code, false, message, null)
 
     protected fun unauthorized(message: String = "인증이 필요합니다."): ApiResultResponse<Nothing?> =
         ApiResultResponse.of(HttpStatus.UNAUTHORIZED, false, message, null)
@@ -31,12 +33,12 @@ abstract class BaseController {
     protected fun internalServerError(message: String = "서버 오류가 발생했습니다."): ApiResultResponse<Nothing?> =
         ApiResultResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, false, message, null)
 
-    protected fun noContent(): ApiResultResponse<Nothing?> =
-        ApiResultResponse.of(HttpStatus.NO_CONTENT, true, "No Content", null)
+    protected fun noContent(): ApiResultResponse<Nothing?> = ApiResultResponse.of(HttpStatus.NO_CONTENT, true, "No Content", null)
 
-    protected fun <T> created(data: T): ApiResultResponse<T> =
-        ApiResultResponse.of(HttpStatus.CREATED, true, "Created", data)
+    protected fun <T> created(data: T): ApiResultResponse<T> = ApiResultResponse.of(HttpStatus.CREATED, true, "Created", data)
 
-    protected fun <T> created(message: String, data: T): ApiResultResponse<T> =
-        ApiResultResponse.of(HttpStatus.CREATED, true, message, data)
+    protected fun <T> created(
+        message: String,
+        data: T,
+    ): ApiResultResponse<T> = ApiResultResponse.of(HttpStatus.CREATED, true, message, data)
 }
