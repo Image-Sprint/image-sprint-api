@@ -1,9 +1,9 @@
 package com.imagesprint.apiserver.exception
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.imagesprint.apiserver.controller.common.ApiResultResponse
 import com.imagesprint.apiserver.controller.common.BaseController
 import com.imagesprint.core.exception.CustomException
-import com.sun.media.sound.InvalidFormatException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
