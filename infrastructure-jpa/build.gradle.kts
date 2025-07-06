@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.25"
     // JPA 어노테이션에 자동으로 protected no-arg constructor가 생성
     kotlin("plugin.jpa") version "1.9.25"
+    kotlin("kapt")
     id("org.springframework.boot") version "3.5.3" apply false
     id("io.spring.dependency-management") version "1.1.7"
 }
@@ -45,11 +46,19 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
 //    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 
+    // QueryDSL core
+    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta") // 반드시 `:jakarta` 붙여야 함 (JPA 3 기준)
+    kapt("com.querydsl:querydsl-apt:5.0.0:jakarta") // QueryDSL Q 클래스 생성용
+
     // DB 드라이버 예시
-    runtimeOnly ("com.h2database:h2")
+    runtimeOnly("com.h2database:h2")
     runtimeOnly("com.mysql:mysql-connector-j")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 tasks.withType<Test> {
