@@ -14,4 +14,13 @@ class WebhookRepositoryImpl(
             .map { w -> w.toDomain() }
 
     override fun save(webhook: Webhook): Webhook = webhookJpaRepository.save(WebhookEntity.fromDomain(webhook)).toDomain()
+
+    override fun removeOwnedBy(
+        userId: Long,
+        webhookId: Long,
+    ): Boolean {
+        val deletedCount = webhookJpaRepository.deleteByWebhookIdAndUserId(userId, webhookId)
+
+        return deletedCount > 0
+    }
 }

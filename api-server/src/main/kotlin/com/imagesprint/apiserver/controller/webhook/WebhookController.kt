@@ -7,6 +7,7 @@ import com.imagesprint.apiserver.controller.webhook.dto.RegisterWebhookRequest
 import com.imagesprint.apiserver.controller.webhook.dto.TestWebhookUrlRequest
 import com.imagesprint.apiserver.controller.webhook.dto.WebhookResponse
 import com.imagesprint.apiserver.security.AuthenticatedUser
+import com.imagesprint.core.port.input.webhook.DeleteWebhookUseCase
 import com.imagesprint.core.port.input.webhook.GetWebhooksUseCase
 import com.imagesprint.core.port.input.webhook.RegisterWebhookUseCase
 import com.imagesprint.core.port.input.webhook.TestWebhookUrlUseCase
@@ -20,6 +21,7 @@ class WebhookController(
     private val getWebhooksUseCase: GetWebhooksUseCase,
     private val registerWebhookUseCase: RegisterWebhookUseCase,
     private val testWebhookUrlUseCase: TestWebhookUrlUseCase,
+    private val deleteWebhookUseCase: DeleteWebhookUseCase,
 ) {
     @GetMapping
     fun getWebhooks(
@@ -49,5 +51,15 @@ class WebhookController(
         testWebhookUrlUseCase.test(request.type, request.url)
 
         return ok("올바른 url입니다.")
+    }
+
+    @DeleteMapping("/{webhookId}")
+    fun delete(
+        @AuthenticationPrincipal authenticatedUser: AuthenticatedUser,
+        @PathVariable webhookId: Long,
+    ): ApiResultResponse<String> {
+        deleteWebhookUseCase.delete(authenticatedUser.userId, webhookId)
+
+        return ok("등록된 웹훅이 삭제되었습니다.")
     }
 }
