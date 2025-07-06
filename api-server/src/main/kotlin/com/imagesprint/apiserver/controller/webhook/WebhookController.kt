@@ -4,10 +4,12 @@ import com.imagesprint.apiserver.controller.common.ApiResultResponse
 import com.imagesprint.apiserver.controller.common.ApiResultResponse.Companion.ok
 import com.imagesprint.apiserver.controller.common.ApiVersions
 import com.imagesprint.apiserver.controller.webhook.dto.RegisterWebhookRequest
+import com.imagesprint.apiserver.controller.webhook.dto.TestWebhookUrlRequest
 import com.imagesprint.apiserver.controller.webhook.dto.WebhookResponse
 import com.imagesprint.apiserver.security.AuthenticatedUser
 import com.imagesprint.core.port.input.webhook.GetWebhooksUseCase
 import com.imagesprint.core.port.input.webhook.RegisterWebhookUseCase
+import com.imagesprint.core.port.input.webhook.TestWebhookUrlUseCase
 import jakarta.validation.Valid
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*
 class WebhookController(
     private val getWebhooksUseCase: GetWebhooksUseCase,
     private val registerWebhookUseCase: RegisterWebhookUseCase,
+    private val testWebhookUrlUseCase: TestWebhookUrlUseCase,
 ) {
     @GetMapping
     fun getWebhooks(
@@ -36,5 +39,15 @@ class WebhookController(
         val result = registerWebhookUseCase.register(command)
 
         return ok(WebhookResponse.from(result))
+    }
+
+    @PostMapping("/test")
+    fun test(
+        @AuthenticationPrincipal authenticatedUser: AuthenticatedUser,
+        @RequestBody @Valid request: TestWebhookUrlRequest,
+    ): ApiResultResponse<String> {
+        testWebhookUrlUseCase.test(request.type, request.url)
+
+        return ok("올바른 url입니다.")
     }
 }
