@@ -1,4 +1,4 @@
-package com.imagesprint.apiserver.controller.auth
+package com.imagesprint.apiserver.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.imagesprint.apiserver.controller.auth.dto.SocialLoginRequest

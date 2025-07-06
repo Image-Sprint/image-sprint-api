@@ -1,6 +1,7 @@
-package com.imagesprint.apiserver.controller.webhook
+package com.imagesprint.apiserver.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.imagesprint.apiserver.controller.webhook.WebhookController
 import com.imagesprint.apiserver.controller.webhook.dto.RegisterWebhookRequest
 import com.imagesprint.apiserver.controller.webhook.dto.TestWebhookUrlRequest
 import com.imagesprint.apiserver.security.AuthenticatedUser

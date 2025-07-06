@@ -11,6 +11,6 @@ class TokenRepositoryImpl(
     override fun getRefreshToken(userId: Long): Token? = repository.getByUserId(userId)?.toDomain()
 
     override fun save(token: Token) {
-        repository.save(TokenEntity.fromDomain(token))
+        repository.save(TokenEntity.from(token))
     }
 }

@@ -8,15 +8,32 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "`user`")
 class UserEntity(
+    email: String,
+    provider: SocialProvider,
+    nickname: String,
+    isDeleted: Boolean = false,
+) : BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val userId: Long? = null,
-    val email: String,
+    val userId: Long? = null
+
+    @Column(nullable = false)
+    var email: String = email
+        protected set
+
     @Enumerated(EnumType.STRING)
-    val provider: SocialProvider,
-    val nickname: String,
-    val isDeleted: Boolean = false,
-) : BaseTimeEntity() {
+    @Column(nullable = false)
+    var provider: SocialProvider = provider
+        protected set
+
+    @Column(nullable = false)
+    var nickname: String = nickname
+        protected set
+
+    @Column
+    var isDeleted: Boolean = isDeleted
+        protected set
+
     fun toDomain(): User =
         User(
             userId = userId,
@@ -26,12 +43,12 @@ class UserEntity(
         )
 
     companion object {
-        fun fromDomain(user: User): UserEntity =
+        fun from(user: User): UserEntity =
             UserEntity(
-                userId = user.userId,
                 email = user.email,
                 provider = user.provider,
                 nickname = user.nickname,
+                isDeleted = false,
             )
     }
 }

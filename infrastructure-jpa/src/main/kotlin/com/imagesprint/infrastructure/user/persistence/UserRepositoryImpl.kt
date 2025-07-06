@@ -16,5 +16,5 @@ class UserRepositoryImpl(
 
     override fun getUser(userId: Long): User? = userJpaRepository.findByUserId(userId)?.toDomain()
 
-    override fun save(user: User): User = userJpaRepository.save(UserEntity.fromDomain(user)).toDomain()
+    override fun save(user: User): User = userJpaRepository.save(UserEntity.from(user)).toDomain()
 }
