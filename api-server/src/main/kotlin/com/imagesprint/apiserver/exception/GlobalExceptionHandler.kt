@@ -3,6 +3,7 @@ package com.imagesprint.apiserver.exception
 import com.imagesprint.apiserver.controller.common.ApiResultResponse
 import com.imagesprint.apiserver.controller.common.BaseController
 import com.imagesprint.core.exception.CustomException
+import com.sun.media.sound.InvalidFormatException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -25,6 +26,14 @@ class GlobalExceptionHandler : BaseController() {
             e.bindingResult.allErrors
                 .firstOrNull()
                 ?.defaultMessage ?: "잘못된 요청입니다."
+        log.warn("Validation 실패: {}", msg)
+
+        return fail(msg)
+    }
+
+    @ExceptionHandler(InvalidFormatException::class)
+    fun handleInvalidFormatException(e: InvalidFormatException): ApiResultResponse<Nothing?> {
+        val msg = "잘못된 enum 값입니다: %s".format(e.message)
         log.warn("Validation 실패: {}", msg)
 
         return fail(msg)

@@ -12,4 +12,6 @@ class WebhookRepositoryImpl(
         webhookJpaRepository
             .findAllByUserId(userId)
             .map { w -> w.toDomain() }
+
+    override fun save(webhook: Webhook): Webhook = webhookJpaRepository.save(WebhookEntity.fromDomain(webhook)).toDomain()
 }
