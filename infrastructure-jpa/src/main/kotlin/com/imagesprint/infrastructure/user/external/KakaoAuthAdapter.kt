@@ -1,4 +1,4 @@
-package com.imagesprint.infrastructure.user.strategy
+package com.imagesprint.infrastructure.user.external
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.imagesprint.core.port.output.user.SocialAuthPort
