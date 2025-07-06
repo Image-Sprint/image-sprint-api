@@ -13,8 +13,8 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import kotlin.test.Test
 
 @SpringBootTest
@@ -38,7 +38,7 @@ class UserIntegrationTest {
 
     @WithMockAuthenticatedUser(userId = 1, provider = "KAKAO")
     @Test
-    fun `유저 정보 조회 시, 유저 정보를 반환한다`() {
+    fun `통합 - 유저 정보 조회 시 200 OK와 유저 정보를 반환한다`() {
         // given
         userRepository.save(
             User(
@@ -50,28 +50,30 @@ class UserIntegrationTest {
 
         // when & then
         mockMvc
-            .perform(
-                get("/api/v1/users/me")
-                    .contentType(MediaType.APPLICATION_JSON),
-            ).andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.userId").isNotEmpty)
-            .andExpect(jsonPath("$.data.email").value("test@example.com"))
-            .andExpect(jsonPath("$.data.nickname").value("test"))
+            .get("/api/v1/users/me") {
+                contentType = MediaType.APPLICATION_JSON
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.data.userId") { exists() }
+                jsonPath("$.data.email") { value("test@example.com") }
+                jsonPath("$.data.nickname") { value("test") }
+            }
     }
 
     @WithMockAuthenticatedUser(userId = 1, provider = "KAKAO")
     @Test
-    fun `유저 정보 조회 시, 유저 정보가 없다면 예외를 반환한다`() {
+    fun `통합 - 유저 정보 조회 시, 유저 정보가 없다면 예외를 반환한다`() {
         // given
-        // 유저 저장 생략 -> DB에 존재하지 않음
+        // 유저 저장 생략
 
         // when & then
         mockMvc
-            .perform(
-                get("/api/v1/users/me")
-                    .contentType(MediaType.APPLICATION_JSON),
-            ).andExpect(status().isOk)
-            .andExpect(jsonPath("$.message").value("유저를 찾을 수 없습니다."))
-            .andExpect(jsonPath("$.data").doesNotExist())
+            .get("/api/v1/users/me") {
+                contentType = MediaType.APPLICATION_JSON
+            }.andExpect {
+                status { isOk() }
+                jsonPath("$.message") { value("유저를 찾을 수 없습니다.") }
+                jsonPath("$.data").doesNotExist()
+            }
     }
 }

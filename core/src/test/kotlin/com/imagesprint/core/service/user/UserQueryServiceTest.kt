@@ -25,7 +25,7 @@ class UserQueryServiceTest {
     }
 
     @Test
-    fun `유저 정보를 조회한다`() {
+    fun `단위 - 유저 정보를 조회한다`() {
         // given
         val userId = 1L
         val returnUser = UserTestFactory.create(userId)
@@ -39,7 +39,7 @@ class UserQueryServiceTest {
     }
 
     @Test
-    fun `유저 정보가 없으면 예외를 반환한다`() {
+    fun `단위 - 유저 정보가 없으면 예외를 반환한다`() {
         // given
         val userId = 999L
         every { userRepository.getUser(any()) } throws CustomException(ErrorCode.USER_NOT_FOUND)

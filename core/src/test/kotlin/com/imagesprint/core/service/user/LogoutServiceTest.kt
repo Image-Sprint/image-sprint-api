@@ -17,7 +17,7 @@ class LogoutServiceTest {
     }
 
     @Test
-    fun `토큰이 존재하지 않으면 아무 작업도 하지 않는다`() {
+    fun `단위 - 토큰이 존재하지 않으면 아무 작업도 하지 않는다`() {
         // given
         every { tokenRepository.getRefreshToken(1L) } returns null
 
@@ -30,7 +30,7 @@ class LogoutServiceTest {
     }
 
     @Test
-    fun `토큰이 존재하면 refreshToken을 비우고 저장한다`() {
+    fun `단위 - 토큰이 존재하면 refreshToken을 비우고 저장한다`() {
         // given
         val existingToken = Token(userId = 1L, refreshToken = "abc123")
         val removedToken = existingToken.removed()
