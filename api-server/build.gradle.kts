@@ -16,6 +16,7 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
@@ -23,8 +24,6 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":common"))
     implementation(project(":infrastructure-jpa"))
-
-//    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     // web & sse
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -49,6 +48,7 @@ dependencies {
 
     // MockK (Kotlin 전용 Mock 프레임워크)
     testImplementation("io.mockk:mockk:1.13.10")
+    testImplementation("com.github.codemonstur:embedded-redis:1.0.0")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
