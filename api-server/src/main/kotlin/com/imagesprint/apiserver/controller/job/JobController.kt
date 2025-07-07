@@ -31,7 +31,7 @@ class JobController(
         @RequestPart("options") @Valid request: CreateJobOptionRequest,
     ): ApiResultResponse<JobResponse> {
         // 파일 개수 제한
-        if (files.isEmpty() || files.size > 100) {
+        if (files.isEmpty() || files.size > 50) {
             throw CustomException(ErrorCode.INVALID_IMAGE_COUNT)
         }
 
