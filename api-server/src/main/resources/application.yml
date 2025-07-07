@@ -5,6 +5,10 @@ spring:
   profiles:
     default: local
     include: secret
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 1GB
 server:
   port: 8080
 ---
@@ -18,7 +22,6 @@ spring:
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -26,6 +29,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 logging:
   level:
