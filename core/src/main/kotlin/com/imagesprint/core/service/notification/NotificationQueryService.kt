@@ -5,11 +5,13 @@ import com.imagesprint.core.port.input.notification.NotificationPage
 import com.imagesprint.core.port.input.notification.NotificationQueryUseCase
 import com.imagesprint.core.port.output.notfication.NotificationRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class NotificationQueryService(
     private val notificationRepository: NotificationRepository,
 ) : NotificationQueryUseCase {
+    @Transactional(readOnly = true)
     override fun getNotifications(query: GetNotificationPageQuery): NotificationPage =
         notificationRepository.getNotificationsByCursor(
             userId = query.userId,

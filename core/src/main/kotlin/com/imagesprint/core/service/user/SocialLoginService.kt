@@ -19,6 +19,16 @@ class SocialLoginService(
     private val tokenProvider: TokenProvider,
     private val tokenRepository: TokenRepository,
 ) : SocialLoginUseCase {
+    /**
+     * 소셜 로그인 플로우를 처리하는 메서드.
+     *
+     * 1. 소셜 인증 코드로 사용자 정보를 조회하고,
+     * 2. 기존 유저가 없다면 회원가입을 진행하며,
+     * 3. 액세스/리프레시 토큰을 발급 및 저장/갱신한다.
+     *
+     * @param command 소셜 인증 코드 및 provider 정보를 담은 커맨드
+     * @return 발급된 액세스 토큰과 리프레시 토큰
+     */
     @Transactional
     override fun loginWithSocial(command: SocialAuthCommand): TokenResult {
         val provider = socialAuthPortResolver.resolve(command.provider)
