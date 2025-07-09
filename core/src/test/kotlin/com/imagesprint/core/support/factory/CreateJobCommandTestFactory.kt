@@ -3,6 +3,7 @@ package com.imagesprint.core.support.factory
 import com.imagesprint.core.port.input.job.CreateJobCommand
 import com.imagesprint.core.port.input.job.ImageUploadMeta
 import com.imagesprint.core.port.input.job.WatermarkPosition
+import java.io.ByteArrayInputStream
 
 object CreateJobCommandTestFactory {
     fun valid(): CreateJobCommand =
@@ -10,8 +11,18 @@ object CreateJobCommandTestFactory {
             userId = 1L,
             fileMetas =
                 listOf(
-                    ImageUploadMeta("image1.png", 12345, "image/png", ByteArray(10)),
-                    ImageUploadMeta("image2.jpg", 23456, "image/jpeg", ByteArray(20)),
+                    ImageUploadMeta(
+                        "image1.png",
+                        12345,
+                        "image/png",
+                        ByteArrayInputStream(ByteArray(20)),
+                    ),
+                    ImageUploadMeta(
+                        "image2.jpg",
+                        23456,
+                        "image/jpeg",
+                        ByteArrayInputStream(ByteArray(20)),
+                    ),
                 ),
             resizeWidth = 800,
             resizeHeight = 600,
