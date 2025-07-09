@@ -4,9 +4,11 @@ import com.imagesprint.core.port.input.notification.GetNotificationPageQuery
 import com.imagesprint.core.port.input.notification.NotificationPage
 import com.imagesprint.core.port.input.notification.NotificationQueryUseCase
 import com.imagesprint.core.port.output.notfication.NotificationRepository
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+@Profile("api")
 @Service
 class NotificationQueryService(
     private val notificationRepository: NotificationRepository,

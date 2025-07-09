@@ -5,9 +5,11 @@ import com.imagesprint.core.exception.ErrorCode
 import com.imagesprint.core.port.input.user.MyProfileResult
 import com.imagesprint.core.port.input.user.UserQueryUseCase
 import com.imagesprint.core.port.output.user.UserRepository
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+@Profile("api")
 @Service
 class UserQueryService(
     private val userRepository: UserRepository,
