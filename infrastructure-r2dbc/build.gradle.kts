@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
-    id("org.springframework.boot") version "3.5.3" apply false
+    id("org.springframework.boot") version "3.5.3" apply false // JAR 생성 X
     id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -18,28 +18,35 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.3")
+    }
+}
+
 dependencies {
-    // Core와 Common 모듈에 대한 의존성
     implementation(project(":core"))
     implementation(project(":common"))
 
-    // Spring R2DBC 관련 의존성
+    // R2DBC Core
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 
-    // MySQL R2DBC 드라이버 (DB에 맞춰 변경 가능)
-    runtimeOnly("dev.miku:r2dbc-mysql:0.8.2.RELEASE")
+    // R2DBC MySQL 드라이버
+    runtimeOnly("io.asyncer:r2dbc-mysql:1.0.3")
 
-    // Jackson for JSON serialization/deserialization
+    // Kotlin Coroutine + Reactor 연동
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.8.1")
+
+    // JSON 처리
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
 
-    // Kotlin reflection (선택)
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-
-    runtimeOnly("io.r2dbc:r2dbc-h2")
-
-    // 테스트 관련
+    // 테스트
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage") // JUnit4 제외
     }
     testImplementation("io.projectreactor:reactor-test")
+}
+
+tasks.getByName<Jar>("jar") {
+    enabled = true
 }

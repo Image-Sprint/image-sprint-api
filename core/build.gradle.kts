@@ -19,18 +19,19 @@ repositories {
 dependencies {
     implementation(project(":common"))
 
+    // 핵심 Spring API
     implementation("org.springframework:spring-tx:6.1.4")
     implementation("org.springframework.boot:spring-boot-starter:3.5.3")
+
+    // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
 
-    // 필요 시 core 레벨 유틸 등 추가
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-
-    // 테스트 런타임
-    testImplementation(kotlin("test"))
+    // Test
+    testImplementation(kotlin("test")) // kotlin-test core
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+    testImplementation("org.junit.platform:junit-platform-commons:1.10.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.1")
 
     // AssertJ (자바/Kotlin 모두 사용 가능)
     testImplementation("org.assertj:assertj-core:3.24.2")
