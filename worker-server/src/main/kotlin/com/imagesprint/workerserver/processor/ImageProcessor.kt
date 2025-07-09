@@ -16,6 +16,24 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.imageio.ImageIO
 
+/**
+ * 주어진 원본 이미지에 대해 리사이징, 압축, 포맷 변환, 워터마크 적용 등의 변환 작업을 수행하고,
+ * 최종 결과 파일을 `/tmp/{jobId}/converted/` 디렉토리에 저장한 뒤, 변환된 파일의 크기를 반환합니다.
+ *
+ * 주요 처리 과정:
+ * 1. 원본 파일 경로 및 결과 파일 경로 설정
+ * 2. Thumbnailator를 사용한 이미지 리사이징 및 포맷 변환
+ * 3. 워터마크 텍스트가 있을 경우 텍스트 워터마크 적용
+ * 4. 최종 변환 이미지 파일 생성 및 임시 파일 정리
+ * 5. 최종 파일의 바이트 크기를 Result.success로 반환
+ *
+ * 실패 시 예외 메시지를 포함한 Result.failure 반환
+ *
+ * @param jobId 변환 작업 ID
+ * @param image 변환 대상 이미지 정보
+ * @param option 변환 옵션 (리사이즈, 포맷, 워터마크 등)
+ * @return 변환된 이미지 파일 크기 (bytes) 또는 실패 시 예외
+ */
 @Component
 class ImageProcessor {
     private val logger = LoggerFactory.getLogger(javaClass)
