@@ -27,6 +27,10 @@ class JobEntity(
     var jobName: String = jobName
         protected set
 
+    @Column
+    var zipUrl: String? = null
+        protected set
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     var status: JobStatus = status
@@ -50,6 +54,7 @@ class JobEntity(
             jobId = jobId,
             userId = userId,
             jobName = jobName,
+            zipUrl = zipUrl,
             status = status,
             originalSize = originalSize,
             convertedSize = convertedSize,
@@ -69,6 +74,7 @@ class JobEntity(
                 originalSize = job.originalSize,
                 imageCount = job.imageCount,
             ).apply {
+                this.zipUrl = job.zipUrl
                 this.convertedSize = job.convertedSize
                 this.doneCount = job.doneCount
                 this.finishedAt = job.finishedAt

@@ -5,12 +5,9 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
 }
 
-group = "com"
-version = "0.0.1-SNAPSHOT"
-
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
@@ -24,17 +21,39 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":infrastructure-r2dbc"))
 
-    // 기본 Spring Boot
-    implementation("org.springframework.boot:spring-boot-starter")
+    // Kotlin Coroutine
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
+    // Spring Reactive Stack
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+    // Reactive Redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+
+    // Reactor 확장
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+
+    // JSON
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
 
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    // 만약 직접 구현이 필요하다면 AWS SDK v2
-//    implementation("software.amazon.awssdk:s3:2.25.14")
+
+    // S3
+    implementation("software.amazon.awssdk:s3:2.31.77")
+
+    // 이미지 처리
+    implementation("net.coobird:thumbnailator:0.4.19")
 
     // 테스트
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage") // JUnit4 제거
+    }
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+    testImplementation("io.mockk:mockk:1.13.8")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

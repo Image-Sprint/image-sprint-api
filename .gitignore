@@ -35,6 +35,7 @@ out/
 
 ### ymls ###
 api-server/**/application-secret.yml
+worker-server/**/application-secret.yml
 
 ### VS Code ###
 .vscode/

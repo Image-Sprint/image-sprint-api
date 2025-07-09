@@ -9,9 +9,11 @@ import com.imagesprint.core.port.output.token.TokenProvider
 import com.imagesprint.core.port.output.token.TokenRepository
 import com.imagesprint.core.port.output.user.SocialAuthPortResolver
 import com.imagesprint.core.port.output.user.UserRepository
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+@Profile("api")
 @Service
 class SocialLoginService(
     private val userRepository: UserRepository,

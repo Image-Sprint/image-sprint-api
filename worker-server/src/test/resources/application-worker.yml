@@ -1,0 +1,20 @@
+spring:
+  r2dbc:
+    url: r2dbc:mysql://localhost:23306/image_sprint
+    username: root
+    password: 1234
+    pool:
+      enabled: true
+      max-size: 30
+      initial-size: 2
+  data:
+    redis:
+      host: localhost
+      port: 6379
+aws:
+  s3:
+    bucket: your-bucket-name
+
+logging:
+  level:
+    io.r2dbc: debug
