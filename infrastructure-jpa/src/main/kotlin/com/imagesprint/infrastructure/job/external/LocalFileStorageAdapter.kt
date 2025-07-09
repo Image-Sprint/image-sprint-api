@@ -4,8 +4,7 @@ import com.imagesprint.core.port.input.job.ImageUploadMeta
 import com.imagesprint.core.port.input.job.SavedImageMeta
 import com.imagesprint.core.port.output.job.FileStoragePort
 import org.springframework.stereotype.Component
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.io.File
 
 @Component
 class LocalFileStorageAdapter : FileStoragePort {
@@ -14,13 +13,15 @@ class LocalFileStorageAdapter : FileStoragePort {
         files: List<ImageUploadMeta>,
         savedImages: List<SavedImageMeta>,
     ) {
-        val baseDir = Paths.get("tmp", "uploads", userId.toString())
-        Files.createDirectories(baseDir)
-
         files.zip(savedImages).forEach { (meta, saved) ->
-            val filename = "${saved.imageFileId}_${meta.originalFilename}"
-            val filePath = baseDir.resolve(filename)
-            Files.write(filePath, meta.bytes)
+            val targetFile = File("/tmp/$userId/${saved.imageFileId}_${meta.originalFilename}.jpg")
+            targetFile.parentFile.mkdirs()
+
+            meta.inputStream.use { input ->
+                targetFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
         }
     }
 }

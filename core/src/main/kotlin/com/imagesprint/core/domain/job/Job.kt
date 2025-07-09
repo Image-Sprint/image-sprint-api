@@ -8,6 +8,7 @@ data class Job(
     val userId: Long,
     val jobName: String,
     val status: JobStatus,
+    val zipUrl: String? = null,
     val originalSize: Long,
     val convertedSize: Long? = null,
     val imageCount: Int,

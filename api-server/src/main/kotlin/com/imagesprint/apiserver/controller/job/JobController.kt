@@ -41,7 +41,7 @@ class JobController(
                     originalFilename = it.originalFilename ?: "unnamed",
                     contentType = it.contentType ?: "application/octet-stream",
                     size = it.size,
-                    bytes = it.bytes,
+                    inputStream = it.inputStream,
                 )
             }
         val command = request.toCommand(user.userId, fileMetas)
