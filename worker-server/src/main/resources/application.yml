@@ -1,9 +1,77 @@
+# 공통 설정
 spring:
+  main:
+    web-application-type: none #  웹서버 비활성화
+  application:
+    name: image-sprint-worker
+  profiles:
+    default: local
+    include: secret, worker
+
+---
+
+# Local 환경 (R2DBC + Redis)
+spring:
+  config:
+    activate:
+      on-profile: local
   r2dbc:
     url: r2dbc:mysql://localhost:23306/image_sprint
     username: root
     password: 1234
+    pool:
+      enabled: true
+      max-size: 10
+      initial-size: 2
+  sql:
+    init:
+      mode: always
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 logging:
   level:
+    root: info
     io.r2dbc: debug
+
+---
+
+# Dev 환경
+spring:
+  config:
+    activate:
+      on-profile: dev
+  r2dbc:
+    url:
+    username:
+    password:
+  data:
+    redis:
+      host:
+      port:
+
+---
+
+# Prod 환경
+spring:
+  config:
+    activate:
+      on-profile: prod
+  r2dbc:
+    url:
+    username:
+    password:
+  data:
+    redis:
+      host:
+      port:
+
+---
+
+# Worker 전용 빈 활성화 조건
+spring:
+  config:
+    activate:
+      on-profile: worker
