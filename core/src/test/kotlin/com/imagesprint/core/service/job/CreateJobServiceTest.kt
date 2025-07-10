@@ -39,7 +39,7 @@ class CreateJobServiceTest {
     }
 
     @Test
-    fun `정상적으로 이미지 변환 Job을 생성하고 큐에 등록한다`() {
+    fun `단위 - 정상적으로 이미지 변환 Job을 생성하고 큐에 등록한다`() {
         // given
         val command = CreateJobCommandTestFactory.valid()
         val fakeImages = listOf(ImageFileTestFactory.create(), ImageFileTestFactory.create())
@@ -68,7 +68,7 @@ class CreateJobServiceTest {
     }
 
     @Test
-    fun `quality 값이 유효하지 않으면 CustomException이 발생한다`() {
+    fun `단위 - quality 값이 유효하지 않으면 CustomException이 발생한다`() {
         // given
         val invalidCommand = CreateJobCommandTestFactory.withQuality(150)
 
@@ -81,7 +81,7 @@ class CreateJobServiceTest {
     }
 
     @Test
-    fun `파일 저장 중 예외가 발생하면 트랜잭션 롤백과 함께 CustomException이 발생한다`() {
+    fun `단위 - 파일 저장 중 예외가 발생하면 트랜잭션 롤백과 함께 CustomException이 발생한다`() {
         // given
         val command = CreateJobCommandTestFactory.valid()
         val fakeImages = listOf(ImageFileTestFactory.create(), ImageFileTestFactory.create())
@@ -109,7 +109,7 @@ class CreateJobServiceTest {
     }
 
     @Test
-    fun `큐 등록 중 예외가 발생하면 트랜잭션 롤백과 함께 CustomException이 발생한다`() {
+    fun `단위 - 큐 등록 중 예외가 발생하면 트랜잭션 롤백과 함께 CustomException이 발생한다`() {
         // given
         val command = CreateJobCommandTestFactory.valid()
         val fakeImages = listOf(ImageFileTestFactory.create(), ImageFileTestFactory.create())
