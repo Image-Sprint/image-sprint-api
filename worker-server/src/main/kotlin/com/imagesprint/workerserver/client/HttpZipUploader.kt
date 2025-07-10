@@ -8,8 +8,8 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 @Component
-class HttpZipUploader : ZipUploader {
-    override fun upload(
+class HttpZipUploader {
+    fun upload(
         url: String,
         file: File,
     ) {

@@ -45,18 +45,18 @@ class ImageProcessor {
     ): Result<Long> =
         try {
             // 1. 소스 및 타겟 경로 구성
-            val sourcePath = "/tmp/$jobId/${image.imageFileId}__${image.fileName}"
-            val targetDir = File("/tmp/$jobId/converted")
-            targetDir.mkdirs()
+            val baseDir = File(System.getProperty("java.io.tmpdir"), jobId.toString())
+            val sourceFile = File(baseDir, "${image.imageFileId}_${image.fileName}")
+            val targetDir = File(baseDir, "converted").apply { mkdirs() }
 
-            val fileNameBase = image.imageFileId.toString() + "__" + image.fileName.substringBeforeLast('.')
+            val fileNameBase = image.imageFileId.toString() + "_" + image.fileName.substringBeforeLast('.')
             val fileExt = option.toFormat
             val tempFile = File(targetDir, "${fileNameBase}_tmp.$fileExt")
             val finalFile = File(targetDir, "$fileNameBase.$fileExt")
 
             // 2. 썸네일 생성
             val builder =
-                Thumbnails.of(File(sourcePath)).apply {
+                Thumbnails.of(sourceFile).apply {
                     if (option.keepRatio) {
                         size(requireNotNull(option.resizeWidth), requireNotNull(option.resizeHeight))
                     } else {
@@ -132,18 +132,52 @@ class ImageProcessor {
         imgHeight: Int,
         textWidth: Int,
         textHeight: Int,
-    ): Pair<Int, Int> =
-        when (position) {
-            WatermarkPosition.TOP_LEFT -> Pair(10, textHeight)
-            WatermarkPosition.TOP_RIGHT -> Pair(imgWidth - textWidth - 10, textHeight)
-            WatermarkPosition.BOTTOM_LEFT -> Pair(10, imgHeight - 10)
-            WatermarkPosition.BOTTOM_RIGHT -> Pair(imgWidth - textWidth - 10, imgHeight - 10)
-            WatermarkPosition.CENTER -> Pair((imgWidth - textWidth) / 2, (imgHeight + textHeight) / 2)
-        }
+    ): Pair<Int, Int> {
+        val margin = 10
+
+        val x =
+            when (position) {
+                WatermarkPosition.TOP_LEFT,
+                WatermarkPosition.CENTER_LEFT,
+                WatermarkPosition.BOTTOM_LEFT,
+                -> margin
+
+                WatermarkPosition.TOP_CENTER,
+                WatermarkPosition.CENTER,
+                WatermarkPosition.BOTTOM_CENTER,
+                -> (imgWidth - textWidth) / 2
+
+                WatermarkPosition.TOP_RIGHT,
+                WatermarkPosition.CENTER_RIGHT,
+                WatermarkPosition.BOTTOM_RIGHT,
+                -> imgWidth - textWidth - margin
+            }
+
+        val y =
+            when (position) {
+                WatermarkPosition.TOP_LEFT,
+                WatermarkPosition.TOP_CENTER,
+                WatermarkPosition.TOP_RIGHT,
+                -> textHeight + margin
+
+                WatermarkPosition.CENTER_LEFT,
+                WatermarkPosition.CENTER,
+                WatermarkPosition.CENTER_RIGHT,
+                -> (imgHeight + textHeight) / 2
+
+                WatermarkPosition.BOTTOM_LEFT,
+                WatermarkPosition.BOTTOM_CENTER,
+                WatermarkPosition.BOTTOM_RIGHT,
+                -> imgHeight - margin
+            }
+
+        return Pair(x, y)
+    }
 
     fun zipConvertedImages(jobId: Long): File {
-        val targetDir = File("/tmp/$jobId/converted")
-        val zipFile = File("/tmp/result/$jobId.zip")
+        val baseDir = File(System.getProperty("java.io.tmpdir"), jobId.toString())
+        val targetDir = File(baseDir, "converted")
+        val zipFile = File(System.getProperty("java.io.tmpdir"), "result/$jobId.zip")
         zipFile.parentFile.mkdirs()
 
         ZipOutputStream(zipFile.outputStream()).use { zipOut ->
@@ -160,7 +194,7 @@ class ImageProcessor {
     }
 
     fun cleanTempFiles(jobId: Long) {
-        val jobDir = File("/tmp/$jobId")
+        val jobDir = File(System.getProperty("java.io.tmpdir"), jobId.toString())
         if (jobDir.exists()) {
             jobDir.deleteRecursively()
             logger.info("[Worker] Temp files cleaned for jobId: $jobId")

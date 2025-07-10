@@ -11,9 +11,12 @@ class WebhookEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val webhookId: Long? = null,
+    @Column(nullable = false)
     val userId: Long,
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     val type: WebhookType,
+    @Column(nullable = false)
     val url: String,
 ) : BaseTimeEntity() {
     fun toDomain(): Webhook =
@@ -28,6 +31,7 @@ class WebhookEntity(
     companion object {
         fun fromDomain(webhook: Webhook): WebhookEntity =
             WebhookEntity(
+                webhookId = webhook.webhookId,
                 userId = webhook.userId,
                 type = webhook.type,
                 url = webhook.url,

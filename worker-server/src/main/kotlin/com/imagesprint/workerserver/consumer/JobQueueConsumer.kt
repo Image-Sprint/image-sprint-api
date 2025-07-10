@@ -19,7 +19,7 @@ class JobQueueConsumer(
                 val jobIdString = queueClient.consume("job:queue") ?: continue
                 logger.debug("[JobQueueConsumer] Consumed jobId string: {}", jobIdString)
 
-                val jobId = jobIdString.toLongOrNull()
+                val jobId = jobIdString.trim().removeSurrounding("\"").toLongOrNull()
                 if (jobId == null) {
                     logger.warn("[JobQueueConsumer] Invalid jobId string format: {}", jobIdString)
                     continue

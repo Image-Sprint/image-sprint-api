@@ -35,7 +35,7 @@ class JobProcessor(
     private val jobWriter: JobWriter,
     private val imageProcessor: ImageProcessor,
     private val s3ClientAdapter: S3ClientAdapter,
-    private val uploader: ZipUploader,
+    private val uploader: HttpZipUploader,
     private val notifier: JobNotifier,
     private val webhookDispatcher: WebhookDispatcher,
 ) {

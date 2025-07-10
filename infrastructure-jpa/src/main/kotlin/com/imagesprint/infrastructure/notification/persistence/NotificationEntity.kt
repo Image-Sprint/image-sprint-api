@@ -8,27 +8,17 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "notification")
 class NotificationEntity(
-    userId: Long,
-    content: String,
-    type: NotificationType,
-) : BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val notificationId: Long? = null
-
+    val notificationId: Long? = null,
     @Column(nullable = false)
-    var userId: Long = userId
-        protected set
-
+    val userId: Long,
     @Column(nullable = false)
-    var content: String = content
-        protected set
-
+    val content: String,
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var type: NotificationType = type
-        protected set
-
+    val type: NotificationType,
+) : BaseTimeEntity() {
     fun toDomain(): Notification =
         Notification(
             notificationId = notificationId,
@@ -41,6 +31,7 @@ class NotificationEntity(
     companion object {
         fun from(notification: Notification): NotificationEntity =
             NotificationEntity(
+                notificationId = null, // 생성 시에는 null
                 userId = notification.userId,
                 content = notification.content,
                 type = notification.type,

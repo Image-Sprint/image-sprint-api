@@ -112,7 +112,7 @@ class CreateJobService(
         // 5. 외부 시스템 처리 (파일 저장 + 큐 등록)
         try {
             fileStoragePort.saveOriginalFiles(
-                userId = command.userId,
+                jobId = jobId,
                 files = command.fileMetas,
                 savedImages = savedImageMetas,
             )
@@ -122,11 +122,7 @@ class CreateJobService(
         }
 
         try {
-            jobQueuePort.enqueueJob(
-                jobId = jobId,
-                userId = command.userId,
-                imageIds = savedImages.map { it.imageFileId!! },
-            )
+            jobQueuePort.enqueueJob(jobId = jobId)
         } catch (e: Exception) {
             logger.error("큐 등록 실패. 롤백 수행됨. JobId: {}", jobId, e)
             throw CustomException(ErrorCode.QUEUE_ENQUEUE_FAILED)

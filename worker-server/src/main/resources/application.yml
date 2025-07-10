@@ -8,6 +8,8 @@ spring:
     default: local
     include: secret, worker
 
+storage:
+  temp-path: /shared/tmp
 ---
 
 # Local 환경 (R2DBC + Redis)

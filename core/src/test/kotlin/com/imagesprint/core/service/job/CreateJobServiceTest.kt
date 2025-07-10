@@ -51,7 +51,7 @@ class CreateJobServiceTest {
         every { jobRepository.saveJob(any()) } returns savedJob
         every { conversionOptionRepository.saveOption(any()) } returns savedOption
         every { imageRepository.updateJobIdAndStatus(any(), any()) } just Runs
-        every { jobQueuePort.enqueueJob(any(), any(), any()) } just Runs
+        every { jobQueuePort.enqueueJob(any()) } just Runs
 
         // when
         val result = createJobService.execute(command)
@@ -64,7 +64,7 @@ class CreateJobServiceTest {
         verify(exactly = 1) { jobRepository.saveJob(any()) }
         verify(exactly = 1) { conversionOptionRepository.saveOption(any()) }
         verify(exactly = 1) { imageRepository.updateJobIdAndStatus(any(), any()) }
-        verify(exactly = 1) { jobQueuePort.enqueueJob(any(), any(), any()) }
+        verify(exactly = 1) { jobQueuePort.enqueueJob(any()) }
     }
 
     @Test
@@ -105,7 +105,7 @@ class CreateJobServiceTest {
         verify(exactly = 1) { fileStoragePort.saveOriginalFiles(any(), any(), any()) }
         verify(exactly = 1) { conversionOptionRepository.saveOption(any()) }
         verify(exactly = 1) { imageRepository.updateJobIdAndStatus(any(), any()) }
-        verify(exactly = 0) { jobQueuePort.enqueueJob(any(), any(), any()) }
+        verify(exactly = 0) { jobQueuePort.enqueueJob(any()) }
     }
 
     @Test
@@ -121,7 +121,7 @@ class CreateJobServiceTest {
         every { jobRepository.saveJob(any()) } returns savedJob
         every { conversionOptionRepository.saveOption(any()) } returns savedOption
         every { imageRepository.updateJobIdAndStatus(any(), any()) } just Runs
-        every { jobQueuePort.enqueueJob(any(), any(), any()) } throws RuntimeException("Redis down")
+        every { jobQueuePort.enqueueJob(any()) } throws RuntimeException("Redis down")
 
         // when & then
         assertThatThrownBy {
@@ -130,6 +130,6 @@ class CreateJobServiceTest {
             .extracting("errorCode")
             .isEqualTo(ErrorCode.QUEUE_ENQUEUE_FAILED)
 
-        verify(exactly = 1) { jobQueuePort.enqueueJob(any(), any(), any()) }
+        verify(exactly = 1) { jobQueuePort.enqueueJob(any()) }
     }
 }

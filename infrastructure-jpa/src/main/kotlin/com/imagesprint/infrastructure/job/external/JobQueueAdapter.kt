@@ -8,17 +8,7 @@ import org.springframework.stereotype.Component
 class JobQueueAdapter(
     private val redisQueueRepository: RedisQueueRepository,
 ) : JobQueuePort {
-    override fun enqueueJob(
-        jobId: Long,
-        userId: Long,
-        imageIds: List<Long>,
-    ) {
-        val message =
-            mapOf(
-                "jobId" to jobId,
-                "userId" to userId,
-                "imageIds" to imageIds,
-            )
-        redisQueueRepository.push("job:queue", message)
+    override fun enqueueJob(jobId: Long) {
+        redisQueueRepository.push("job:queue", jobId.toString())
     }
 }

@@ -50,7 +50,10 @@ class ReactiveConversionOptionRepositoryImpl(
             toFormat = row.get("to_format", String::class.java)!!,
             quality = row.get("quality", Integer::class.java)?.toInt()!!,
             watermarkText = row.get("watermark_text", String::class.java),
-            watermarkPosition = WatermarkPosition.valueOf(row.get("watermark_position", String::class.java)!!),
+            watermarkPosition =
+                row
+                    .get("watermark_position", String::class.java)
+                    ?.let { WatermarkPosition.valueOf(it) },
             watermarkOpacity = row.get("watermark_opacity", Float::class.java)?.toFloat(),
         )
 }

@@ -7,21 +7,14 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "token")
 class TokenEntity(
-    userId: Long,
-    refreshToken: String,
-) : BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val tokenId: Long? = null
-
+    val tokenId: Long? = null,
     @Column(nullable = false)
-    var userId: Long = userId
-        protected set
-
+    var userId: Long,
     @Column(nullable = false)
-    var refreshToken: String = refreshToken
-        protected set
-
+    var refreshToken: String,
+) : BaseTimeEntity() {
     fun toDomain(): Token =
         Token(
             tokenId = tokenId,
@@ -32,6 +25,7 @@ class TokenEntity(
     companion object {
         fun from(token: Token): TokenEntity =
             TokenEntity(
+                tokenId = token.tokenId,
                 userId = token.userId,
                 refreshToken = token.refreshToken,
             )
