@@ -8,53 +8,25 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "conversion_option")
 class ConversionOptionEntity(
-    job: JobEntity,
-    resizeWidth: Int?,
-    resizeHeight: Int?,
-    keepRatio: Boolean,
-    toFormat: String,
-    quality: Int,
-    watermarkText: String?,
-    watermarkPosition: WatermarkPosition?,
-    watermarkOpacity: Float?,
-) : BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val conversionOptionId: Long? = null
-
+    val conversionOptionId: Long? = null,
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", unique = true, nullable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    var job: JobEntity = job
-        protected set
-
-    var resizeWidth: Int? = resizeWidth
-        protected set
-
-    var resizeHeight: Int? = resizeHeight
-        protected set
-
+    val job: JobEntity,
+    val resizeWidth: Int? = null,
+    val resizeHeight: Int? = null,
     @Column(nullable = false)
-    var keepRatio: Boolean = keepRatio
-        protected set
-
+    val keepRatio: Boolean,
     @Column(nullable = false)
-    var toFormat: String = toFormat
-        protected set
-
+    val toFormat: String,
     @Column(nullable = false)
-    var quality: Int = quality
-        protected set
-
-    var watermarkText: String? = watermarkText
-        protected set
-
+    val quality: Int,
+    val watermarkText: String? = null,
     @Enumerated(EnumType.STRING)
-    var watermarkPosition: WatermarkPosition? = watermarkPosition
-        protected set
-
-    var watermarkOpacity: Float? = watermarkOpacity
-        protected set
-
+    val watermarkPosition: WatermarkPosition? = null,
+    val watermarkOpacity: Float? = null,
+) : BaseTimeEntity() {
     fun toDomain(): ConversionOption =
         ConversionOption(
             jobId = job.jobId!!,
@@ -74,6 +46,7 @@ class ConversionOptionEntity(
             job: JobEntity,
         ): ConversionOptionEntity =
             ConversionOptionEntity(
+                conversionOptionId = null, // 생성 시에는 null
                 job = job,
                 resizeWidth = option.resizeWidth,
                 resizeHeight = option.resizeHeight,

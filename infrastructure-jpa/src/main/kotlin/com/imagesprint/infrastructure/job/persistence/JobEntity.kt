@@ -9,46 +9,27 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "job")
 class JobEntity(
-    userId: Long,
-    jobName: String,
-    status: JobStatus,
-    originalSize: Long,
-    imageCount: Int,
-) : BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val jobId: Long? = null
-
+    val jobId: Long? = null,
     @Column(nullable = false)
-    var userId: Long = userId
-        protected set
-
+    val userId: Long,
     @Column(nullable = false)
-    var jobName: String = jobName
-        protected set
-
-    @Column
-    var zipUrl: String? = null
-        protected set
-
+    val jobName: String,
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var status: JobStatus = status
-        protected set
-
+    val status: JobStatus,
     @Column(nullable = false)
-    var originalSize: Long = originalSize
-        protected set
-
+    val originalSize: Long,
     @Column(nullable = false)
-    var imageCount: Int = imageCount
-        protected set
-
-    var convertedSize: Long? = null
-    var doneCount: Int? = null
-    var finishedAt: LocalDateTime? = null
-    var expiredAt: LocalDateTime? = null
-
+    val imageCount: Int,
+    @Column(columnDefinition = "TEXT")
+    var zipUrl: String? = null,
+    var convertedSize: Long? = null,
+    var doneCount: Int? = null,
+    var finishedAt: LocalDateTime? = null,
+    var expiredAt: LocalDateTime? = null,
+) : BaseTimeEntity() {
     fun toDomain(): Job =
         Job(
             jobId = jobId,
@@ -68,17 +49,17 @@ class JobEntity(
     companion object {
         fun from(job: Job): JobEntity =
             JobEntity(
+                jobId = job.jobId,
                 userId = job.userId,
                 jobName = job.jobName,
                 status = job.status,
                 originalSize = job.originalSize,
                 imageCount = job.imageCount,
-            ).apply {
-                this.zipUrl = job.zipUrl
-                this.convertedSize = job.convertedSize
-                this.doneCount = job.doneCount
-                this.finishedAt = job.finishedAt
-                this.expiredAt = job.expiredAt
-            }
+                zipUrl = job.zipUrl,
+                convertedSize = job.convertedSize,
+                doneCount = job.doneCount,
+                finishedAt = job.finishedAt,
+                expiredAt = job.expiredAt,
+            )
     }
 }

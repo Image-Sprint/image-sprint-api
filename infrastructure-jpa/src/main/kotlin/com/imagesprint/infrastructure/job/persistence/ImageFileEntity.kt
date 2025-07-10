@@ -8,42 +8,24 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "image_file")
 class ImageFileEntity(
-    job: JobEntity?,
-    fileName: String,
-    format: String,
-    size: Long,
-    convertStatus: ConvertStatus,
-) : BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val imageFileId: Long? = null
-
+    val imageFileId: Long? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    var job: JobEntity? = job
-        protected set
-
+    val job: JobEntity? = null,
     @Column(nullable = false)
-    var fileName: String = fileName
-        protected set
-
+    val fileName: String,
     @Column(nullable = false)
-    var format: String = format
-        protected set
-
+    val format: String,
     @Column(nullable = false)
-    var size: Long = size
-        protected set
-
-    var convertedSize: Long? = null
-
+    val size: Long,
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var convertStatus: ConvertStatus = convertStatus
-        protected set
-
-    var errorMessage: String? = null
-
+    val convertStatus: ConvertStatus,
+    var convertedSize: Long? = null,
+    var errorMessage: String? = null,
+) : BaseTimeEntity() {
     fun toDomain(): ImageFile =
         ImageFile(
             imageFileId = imageFileId,
@@ -63,14 +45,14 @@ class ImageFileEntity(
             job: JobEntity? = null,
         ): ImageFileEntity =
             ImageFileEntity(
+                imageFileId = file.imageFileId,
                 job = job,
                 fileName = file.fileName,
                 format = file.format,
                 size = file.size,
                 convertStatus = file.convertStatus,
-            ).apply {
-                this.convertedSize = file.convertedSize
-                this.errorMessage = file.errorMessage
-            }
+                convertedSize = file.convertedSize,
+                errorMessage = file.errorMessage,
+            )
     }
 }
