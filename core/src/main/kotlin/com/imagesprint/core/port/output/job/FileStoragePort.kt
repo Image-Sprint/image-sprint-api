@@ -5,7 +5,7 @@ import com.imagesprint.core.port.input.job.SavedImageMeta
 
 interface FileStoragePort {
     fun saveOriginalFiles(
-        userId: Long,
+        jobId: Long,
         files: List<ImageUploadMeta>,
         savedImages: List<SavedImageMeta>,
     )
