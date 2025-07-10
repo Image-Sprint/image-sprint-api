@@ -7,9 +7,9 @@ import jakarta.validation.constraints.*
 
 data class CreateJobOptionRequest(
     @Min(1)
-    val resizeWidth: Int?,
+    val resizeWidth: Int? = 1000,
     @Min(1)
-    val resizeHeight: Int?,
+    val resizeHeight: Int? = 800,
     val keepRatio: Boolean = true,
     @NotBlank
     val toFormat: String,
