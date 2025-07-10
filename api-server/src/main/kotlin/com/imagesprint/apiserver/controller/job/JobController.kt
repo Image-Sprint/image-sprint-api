@@ -9,21 +9,28 @@ import com.imagesprint.apiserver.security.AuthenticatedUser
 import com.imagesprint.core.exception.CustomException
 import com.imagesprint.core.exception.ErrorCode
 import com.imagesprint.core.port.input.job.CreateJobUseCase
+import com.imagesprint.core.port.input.job.GetMyJobsUseCase
 import com.imagesprint.core.port.input.job.ImageUploadMeta
 import jakarta.validation.Valid
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestPart
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("${ApiVersions.V1}/jobs")
 class JobController(
     private val createJobUseCase: CreateJobUseCase,
+    private val getMyJobsUseCase: GetMyJobsUseCase,
 ) {
+    @GetMapping
+    fun getJobs(
+        @AuthenticationPrincipal user: AuthenticatedUser,
+    ): ApiResultResponse<List<JobResponse>> {
+        val result = getMyJobsUseCase.getMyJobs(user.userId)
+        return ok(result.map { JobResponse.from(it) })
+    }
+
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun createJob(
         @AuthenticationPrincipal user: AuthenticatedUser,
