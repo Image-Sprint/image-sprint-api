@@ -134,6 +134,7 @@ class CreateJobService(
             status = savedJob.status.name,
             imageCount = savedImages.size,
             originalSize = savedImages.sumOf { it.size },
+            createdAt = savedJob.createdAt,
         )
     }
 

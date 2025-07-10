@@ -7,6 +7,7 @@ import com.imagesprint.apiserver.support.WithMockAuthenticatedUser
 import com.imagesprint.core.port.input.job.WatermarkPosition
 import com.imagesprint.infrastructure.common.DatabaseCleaner
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,6 +17,7 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.multipart
 import kotlin.test.Test
 
@@ -39,114 +41,176 @@ class JobIntegrationTest {
         databaseCleaner.truncate()
     }
 
-    @Test
-    @WithMockAuthenticatedUser(userId = 1, provider = "KAKAO")
-    fun `통합 - 정상적으로 Job을 생성하면 200 OK와 결과를 반환한다`() {
-        // given
-        val file = MockMultipartFile("files", "sample.jpg", "image/jpeg", "image-data".toByteArray())
-        val options =
-            CreateJobOptionRequest(
-                resizeWidth = 800,
-                resizeHeight = 600,
-                keepRatio = true,
-                toFormat = "jpeg",
-                quality = 80,
-                watermarkText = "sample",
-                watermarkPosition = WatermarkPosition.BOTTOM_RIGHT,
-                watermarkOpacity = 0.5f,
-            )
-        val optionsPart =
-            MockMultipartFile(
-                "options",
-                "options.json",
-                "application/json",
-                objectMapper.writeValueAsBytes(options),
-            )
+    @Nested
+    inner class GetMyJobsTest {
+        @Test
+        @WithMockAuthenticatedUser(userId = 1, provider = "KAKAO")
+        fun `통합 - 등록한 Job이 없을 경우 빈 배열을 반환한다`() {
+            mockMvc
+                .get("/api/v1/jobs")
+                .andExpect {
+                    status { isOk() }
+                    jsonPath("$.data") { isArray() }
+                    jsonPath("$.data.length()") { value(0) }
+                }
+        }
 
-        // when & then
-        mockMvc
-            .multipart("/api/v1/jobs") {
-                file(file)
-                file(optionsPart)
-                contentType = MediaType.MULTIPART_FORM_DATA
-            }.andExpect {
-                status { isOk() }
-                jsonPath("$.data.jobId") { exists() }
-                jsonPath("$.data.status") { value("PENDING") }
-            }
+        @Test
+        @WithMockAuthenticatedUser(userId = 1, provider = "KAKAO")
+        fun `통합 - 등록한 Job이 있을 경우 정상적으로 목록을 반환한다`() {
+            // 먼저 Job 하나 생성
+            val file = MockMultipartFile("files", "sample.jpg", "image/jpeg", "image-data".toByteArray())
+            val options =
+                CreateJobOptionRequest(
+                    resizeWidth = 800,
+                    resizeHeight = 600,
+                    keepRatio = true,
+                    toFormat = "jpeg",
+                    quality = 80,
+                    watermarkText = "sample",
+                    watermarkPosition = WatermarkPosition.BOTTOM_RIGHT,
+                    watermarkOpacity = 0.5f,
+                )
+            val optionsPart =
+                MockMultipartFile(
+                    "options",
+                    "options.json",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(options),
+                )
+
+            mockMvc
+                .multipart("/api/v1/jobs") {
+                    file(file)
+                    file(optionsPart)
+                    contentType = MediaType.MULTIPART_FORM_DATA
+                }.andExpect {
+                    status { isOk() }
+                }
+
+            // 그리고 목록 조회
+            mockMvc
+                .get("/api/v1/jobs")
+                .andExpect {
+                    status { isOk() }
+                    jsonPath("$.data") { isArray() }
+                    jsonPath("$.data.length()") { value(1) }
+                    jsonPath("$.data[0].status") { value("PENDING") }
+                }
+        }
     }
 
-    @Test
-    @WithMockAuthenticatedUser(userId = 1, provider = "KAKAO")
-    fun `통합 - 파일 개수가 0개이거나 100개 초과인 경우 status 400 코드를 반환한다`() {
-        val options =
-            CreateJobOptionRequest(
-                resizeWidth = 800,
-                resizeHeight = 600,
-                keepRatio = true,
-                toFormat = "jpeg",
-                quality = 80,
-                watermarkText = null,
-                watermarkPosition = null,
-                watermarkOpacity = null,
-            )
-        val optionsPart =
-            MockMultipartFile(
-                "options",
-                "options.json",
-                "application/json",
-                objectMapper.writeValueAsBytes(options),
-            )
+    @Nested
+    inner class CreateJobTest {
+        @Test
+        @WithMockAuthenticatedUser(userId = 1, provider = "KAKAO")
+        fun `통합 - 정상적으로 Job을 생성하면 200 OK와 결과를 반환한다`() {
+            // given
+            val file = MockMultipartFile("files", "sample.jpg", "image/jpeg", "image-data".toByteArray())
+            val options =
+                CreateJobOptionRequest(
+                    resizeWidth = 800,
+                    resizeHeight = 600,
+                    keepRatio = true,
+                    toFormat = "jpeg",
+                    quality = 80,
+                    watermarkText = "sample",
+                    watermarkPosition = WatermarkPosition.BOTTOM_RIGHT,
+                    watermarkOpacity = 0.5f,
+                )
+            val optionsPart =
+                MockMultipartFile(
+                    "options",
+                    "options.json",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(options),
+                )
 
-        val tooManyFiles =
-            (1..101).map {
-                MockMultipartFile("files", "file$it.jpg", "image/jpeg", "data".toByteArray())
-            }
+            // when & then
+            mockMvc
+                .multipart("/api/v1/jobs") {
+                    file(file)
+                    file(optionsPart)
+                    contentType = MediaType.MULTIPART_FORM_DATA
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.data.jobId") { exists() }
+                    jsonPath("$.data.status") { value("PENDING") }
+                }
+        }
 
-        mockMvc
-            .multipart("/api/v1/jobs") {
-                file(optionsPart)
-                tooManyFiles.forEach { file(it) }
-                contentType = MediaType.MULTIPART_FORM_DATA
-            }.andExpect {
-                status { isOk() }
-                jsonPath("$.status") { value(400) }
-                jsonPath("$.message") { value("1~100개의 이미지를 업로드해야 합니다.") }
-            }
-    }
+        @Test
+        @WithMockAuthenticatedUser(userId = 1, provider = "KAKAO")
+        fun `통합 - 파일 개수가 0개이거나 100개 초과인 경우 status 400 코드를 반환한다`() {
+            val options =
+                CreateJobOptionRequest(
+                    resizeWidth = 800,
+                    resizeHeight = 600,
+                    keepRatio = true,
+                    toFormat = "jpeg",
+                    quality = 80,
+                    watermarkText = null,
+                    watermarkPosition = null,
+                    watermarkOpacity = null,
+                )
+            val optionsPart =
+                MockMultipartFile(
+                    "options",
+                    "options.json",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(options),
+                )
 
-    @Test
-    @WithMockAuthenticatedUser(userId = 1, provider = "KAKAO")
-    fun `통합 - 유효하지 않은 옵션 값이면 status 400 코드를 반환한다`() {
-        val file = MockMultipartFile("files", "sample.jpg", "image/jpeg", "image-data".toByteArray())
-        val invalidOptions =
-            CreateJobOptionRequest(
-                resizeWidth = 0, // invalid
-                resizeHeight = 600,
-                keepRatio = true,
-                toFormat = "jpeg",
-                quality = 80,
-                watermarkText = null,
-                watermarkPosition = null,
-                watermarkOpacity = null,
-            )
-        val optionsPart =
-            MockMultipartFile(
-                "options",
-                "options.json",
-                "application/json",
-                objectMapper.writeValueAsBytes(invalidOptions),
-            )
+            val tooManyFiles =
+                (1..101).map {
+                    MockMultipartFile("files", "file$it.jpg", "image/jpeg", "data".toByteArray())
+                }
 
-        mockMvc
-            .multipart("/api/v1/jobs") {
-                file(file)
-                file(optionsPart)
-                contentType = MediaType.MULTIPART_FORM_DATA
-            }.andExpect {
-                status { isOk() }
-                jsonPath("$.status") { value(400) }
-                jsonPath("$.message") { value("resizeWidth는 양수여야 합니다.") }
-            }
+            mockMvc
+                .multipart("/api/v1/jobs") {
+                    file(optionsPart)
+                    tooManyFiles.forEach { file(it) }
+                    contentType = MediaType.MULTIPART_FORM_DATA
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.status") { value(400) }
+                    jsonPath("$.message") { value("1~100개의 이미지를 업로드해야 합니다.") }
+                }
+        }
+
+        @Test
+        @WithMockAuthenticatedUser(userId = 1, provider = "KAKAO")
+        fun `통합 - 유효하지 않은 옵션 값이면 status 400 코드를 반환한다`() {
+            val file = MockMultipartFile("files", "sample.jpg", "image/jpeg", "image-data".toByteArray())
+            val invalidOptions =
+                CreateJobOptionRequest(
+                    resizeWidth = 0, // invalid
+                    resizeHeight = 600,
+                    keepRatio = true,
+                    toFormat = "jpeg",
+                    quality = 80,
+                    watermarkText = null,
+                    watermarkPosition = null,
+                    watermarkOpacity = null,
+                )
+            val optionsPart =
+                MockMultipartFile(
+                    "options",
+                    "options.json",
+                    "application/json",
+                    objectMapper.writeValueAsBytes(invalidOptions),
+                )
+
+            mockMvc
+                .multipart("/api/v1/jobs") {
+                    file(file)
+                    file(optionsPart)
+                    contentType = MediaType.MULTIPART_FORM_DATA
+                }.andExpect {
+                    status { isOk() }
+                    jsonPath("$.status") { value(400) }
+                    jsonPath("$.message") { value("resizeWidth는 양수여야 합니다.") }
+                }
+        }
     }
 }

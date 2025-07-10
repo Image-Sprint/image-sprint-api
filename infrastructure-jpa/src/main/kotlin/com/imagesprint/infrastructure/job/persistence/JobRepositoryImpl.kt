@@ -22,6 +22,12 @@ class JobRepositoryImpl(
         return savedEntity.toDomain()
     }
 
+    override fun getMyJobs(userId: Long): List<Job> =
+        jobJpaRepository
+            .findAllByUserId(userId)
+            .map { it.toDomain() }
+            .sortedByDescending { it.createdAt }
+
     override fun saveImages(images: List<ImageFile>): List<ImageFile> {
         val imageFileEntities = images.map { ImageFileEntity.from(it) }
         val savedEntities = imageFileJpaRepository.saveAll(imageFileEntities)
