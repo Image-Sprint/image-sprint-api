@@ -9,14 +9,17 @@ import java.io.File
 @Component
 class LocalFileStorageAdapter : FileStoragePort {
     override fun saveOriginalFiles(
-        userId: Long,
+        jobId: Long,
         files: List<ImageUploadMeta>,
         savedImages: List<SavedImageMeta>,
     ) {
         files.zip(savedImages).forEach { (meta, saved) ->
-            val targetFile = File("/tmp/$userId/${saved.imageFileId}_${meta.originalFilename}.jpg")
+            val targetFile =
+                File(
+                    System.getProperty("java.io.tmpdir"),
+                    "$jobId/${saved.imageFileId}_${meta.originalFilename}",
+                )
             targetFile.parentFile.mkdirs()
-
             meta.inputStream.use { input ->
                 targetFile.outputStream().use { output ->
                     input.copyTo(output)
