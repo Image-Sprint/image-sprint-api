@@ -11,8 +11,12 @@ spring:
       max-request-size: 1GB
 
 server:
+  tomcat:
+    max-part-count: 50
   port: 8080
 
+storage:
+  temp-path: /shared/tmp
 ---
 
 # Local 환경 (개발용 API 서버)
