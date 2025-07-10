@@ -115,9 +115,9 @@ class ImageProcessorTest {
         fileName: String,
     ): File {
         val source = File("src/test/resources/$fileName")
-        val destDir = File("/tmp/$jobId")
-        destDir.mkdirs()
-        val dest = File(destDir, "${imageFileId}__$fileName")
+        val baseDir = File(System.getProperty("java.io.tmpdir"), jobId.toString())
+        baseDir.mkdirs()
+        val dest = File(baseDir, "${imageFileId}_$fileName")
         source.copyTo(dest, overwrite = true)
         return dest
     }

@@ -27,7 +27,7 @@ class JobProcessorTest {
     lateinit var s3ClientAdapter: S3ClientAdapter
 
     @MockK
-    lateinit var uploader: ZipUploader
+    lateinit var uploader: HttpZipUploader
 
     @MockK
     lateinit var notifier: JobNotifier
