@@ -1,4 +1,4 @@
-package com.imagesprint.workerserver.client
+package com.imagesprint.infrastructure.redis.queue
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -13,8 +13,8 @@ class CoroutineRedisQueueClient(
     private val logger = LoggerFactory.getLogger(CoroutineRedisQueueClient::class.java)
 
     companion object {
-        private const val POLLING_INTERVAL_MS = 1000L
-        private const val INITIAL_DELAY_MS = 2000L
+        private const val POLLING_INTERVAL_MS = 500L
+        private const val INITIAL_DELAY_MS = 500L
     }
 
     suspend fun consume(queueKey: String): String? {
