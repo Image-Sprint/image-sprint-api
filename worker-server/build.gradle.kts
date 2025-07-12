@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":common"))
     implementation(project(":infrastructure-r2dbc"))
+    implementation(project(":infrastructure-redis"))
 
     // Kotlin Coroutine
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
