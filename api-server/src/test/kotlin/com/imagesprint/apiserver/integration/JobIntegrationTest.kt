@@ -5,7 +5,9 @@ import com.imagesprint.apiserver.controller.job.dto.CreateJobOptionRequest
 import com.imagesprint.apiserver.support.EmbeddedRedisConfig
 import com.imagesprint.apiserver.support.WithMockAuthenticatedUser
 import com.imagesprint.core.port.input.job.WatermarkPosition
-import com.imagesprint.infrastructure.common.DatabaseCleaner
+import com.imagesprint.infrastructure.jpa.common.DatabaseCleaner
+import com.imagesprint.infrastructure.redis.subscriber.RedisJobProgressSubscriber
+import com.ninjasquad.springmockk.MockkBean
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,6 +38,9 @@ class JobIntegrationTest {
     @Autowired
     private lateinit var databaseCleaner: DatabaseCleaner
 
+    @MockkBean
+    lateinit var redisJobProgressSubscriber: RedisJobProgressSubscriber
+
     @BeforeEach
     fun setup() {
         databaseCleaner.truncate()
@@ -50,8 +55,8 @@ class JobIntegrationTest {
                 .get("/api/v1/jobs")
                 .andExpect {
                     status { isOk() }
-                    jsonPath("$.data") { isArray() }
-                    jsonPath("$.data.length()") { value(0) }
+                    jsonPath("$.data.jobs") { isArray() }
+                    jsonPath("$.data.jobs.length()") { value(0) }
                 }
         }
 
@@ -93,9 +98,9 @@ class JobIntegrationTest {
                 .get("/api/v1/jobs")
                 .andExpect {
                     status { isOk() }
-                    jsonPath("$.data") { isArray() }
-                    jsonPath("$.data.length()") { value(1) }
-                    jsonPath("$.data[0].status") { value("PENDING") }
+                    jsonPath("$.data.jobs") { isArray() }
+                    jsonPath("$.data.jobs.length()") { value(1) }
+                    jsonPath("$.data.jobs[0].status") { value("PENDING") }
                 }
         }
     }
@@ -141,7 +146,7 @@ class JobIntegrationTest {
 
         @Test
         @WithMockAuthenticatedUser(userId = 1, provider = "KAKAO")
-        fun `통합 - 파일 개수가 0개이거나 100개 초과인 경우 status 400 코드를 반환한다`() {
+        fun `통합 - 파일 개수가 0개이거나 50개 초과인 경우 status 400 코드를 반환한다`() {
             val options =
                 CreateJobOptionRequest(
                     resizeWidth = 800,
@@ -162,7 +167,7 @@ class JobIntegrationTest {
                 )
 
             val tooManyFiles =
-                (1..101).map {
+                (1..51).map {
                     MockMultipartFile("files", "file$it.jpg", "image/jpeg", "data".toByteArray())
                 }
 

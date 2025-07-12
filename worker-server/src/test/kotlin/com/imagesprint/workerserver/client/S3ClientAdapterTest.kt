@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
 import java.net.URL
 import kotlin.test.Test
 
@@ -22,40 +23,59 @@ class S3ClientAdapterTest {
     }
 
     @Test
-    fun `단위 - presigned URL을 정상적으로 생성한다`() {
+    fun `단위 - presigned 업로드 URL을 정상적으로 생성한다`() {
         // given
         val jobId = 1L
         val userId = 42L
         val mockUrl = URL("https://example.com/presigned-url")
 
-        val mockRequest = slot<GetObjectPresignRequest>()
-        every { s3Presigner.presignGetObject(capture(mockRequest)) } returns
+        val mockPutRequest = slot<PutObjectPresignRequest>()
+        every { s3Presigner.presignPutObject(capture(mockPutRequest)) } returns
             mockk {
                 every { url() } returns mockUrl
             }
 
         // when
-        val url = s3ClientAdapter.generatePresignedUrl(userId, jobId)
+        val url = s3ClientAdapter.generatePresignedUploadUrl(userId, jobId)
 
         // then
         assertThat(url).isEqualTo(mockUrl.toString())
-        assertThat(mockRequest.captured.getObjectRequest().bucket()).isEqualTo("test-bucket")
-        assertThat(mockRequest.captured.getObjectRequest().key()).contains("users/$userId/jobs/$jobId")
+        val putObject = mockPutRequest.captured.putObjectRequest()
+        assertThat(putObject.bucket()).isEqualTo("test-bucket")
+        assertThat(putObject.key()).isEqualTo("users/$userId/jobs/$jobId/result.zip")
     }
 
     @Test
-    fun `단위 - presigned URL 생성 실패 시 예외가 발생한다`() {
-        // given
+    fun `단위 - presigned 다운로드 URL을 정상적으로 생성한다`() {
+        val jobId = 1L
+        val userId = 42L
+        val mockUrl = URL("https://example.com/presigned-url")
+
+        val mockGetRequest = slot<GetObjectPresignRequest>()
+        every { s3Presigner.presignGetObject(capture(mockGetRequest)) } returns
+            mockk {
+                every { url() } returns mockUrl
+            }
+
+        val url = s3ClientAdapter.generatePresignedDownloadUrl(userId, jobId)
+
+        assertThat(url).isEqualTo(mockUrl.toString())
+        val getObject = mockGetRequest.captured.getObjectRequest()
+        assertThat(getObject.bucket()).isEqualTo("test-bucket")
+        assertThat(getObject.key()).isEqualTo("users/$userId/jobs/$jobId/result.zip")
+    }
+
+    @Test
+    fun `단위 - presigned 업로드 URL 생성 실패 시 예외가 발생한다`() {
         val jobId = 1L
         val userId = 42L
 
         every {
-            s3Presigner.presignGetObject(any<GetObjectPresignRequest>())
+            s3Presigner.presignPutObject(any<PutObjectPresignRequest>())
         } throws RuntimeException("Presign failed")
 
-        // when & then
         assertThatThrownBy {
-            s3ClientAdapter.generatePresignedUrl(userId, jobId)
+            s3ClientAdapter.generatePresignedUploadUrl(userId, jobId)
         }.isInstanceOf(RuntimeException::class.java)
             .hasMessageContaining("Presign failed")
     }

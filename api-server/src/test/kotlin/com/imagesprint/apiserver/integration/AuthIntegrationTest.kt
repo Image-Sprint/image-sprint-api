@@ -5,7 +5,9 @@ import com.imagesprint.apiserver.controller.auth.dto.SocialLoginRequest
 import com.imagesprint.apiserver.security.AuthenticatedUser
 import com.imagesprint.apiserver.support.SocialAuthMockConfig
 import com.imagesprint.core.domain.user.SocialProvider
-import com.imagesprint.infrastructure.common.DatabaseCleaner
+import com.imagesprint.infrastructure.jpa.common.DatabaseCleaner
+import com.imagesprint.infrastructure.redis.subscriber.RedisJobProgressSubscriber
+import com.ninjasquad.springmockk.MockkBean
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,6 +37,9 @@ class AuthIntegrationTest {
 
     @Autowired
     lateinit var databaseCleaner: DatabaseCleaner
+
+    @MockkBean
+    lateinit var redisJobProgressSubscriber: RedisJobProgressSubscriber
 
     @BeforeEach
     fun setup() {

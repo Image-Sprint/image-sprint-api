@@ -4,7 +4,9 @@ import com.imagesprint.apiserver.support.WithMockAuthenticatedUser
 import com.imagesprint.core.domain.notification.Notification
 import com.imagesprint.core.domain.notification.NotificationType
 import com.imagesprint.core.port.output.notfication.NotificationRepository
-import com.imagesprint.infrastructure.common.DatabaseCleaner
+import com.imagesprint.infrastructure.jpa.common.DatabaseCleaner
+import com.imagesprint.infrastructure.redis.subscriber.RedisJobProgressSubscriber
+import com.ninjasquad.springmockk.MockkBean
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -28,6 +30,9 @@ class NotificationIntegrationTest {
 
     @Autowired
     private lateinit var notificationRepository: NotificationRepository
+
+    @MockkBean
+    lateinit var redisJobProgressSubscriber: RedisJobProgressSubscriber
 
     @BeforeEach
     fun setup() {

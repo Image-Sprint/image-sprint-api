@@ -4,7 +4,9 @@ import com.imagesprint.apiserver.support.WithMockAuthenticatedUser
 import com.imagesprint.core.domain.user.SocialProvider
 import com.imagesprint.core.domain.user.User
 import com.imagesprint.core.port.output.user.UserRepository
-import com.imagesprint.infrastructure.common.DatabaseCleaner
+import com.imagesprint.infrastructure.jpa.common.DatabaseCleaner
+import com.imagesprint.infrastructure.redis.subscriber.RedisJobProgressSubscriber
+import com.ninjasquad.springmockk.MockkBean
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -30,6 +32,9 @@ class UserIntegrationTest {
 
     @Autowired
     lateinit var userRepository: UserRepository
+
+    @MockkBean
+    lateinit var redisJobProgressSubscriber: RedisJobProgressSubscriber
 
     @BeforeEach
     fun setup() {
