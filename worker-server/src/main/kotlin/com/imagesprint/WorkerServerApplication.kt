@@ -12,7 +12,9 @@ class WorkerServerApplication
 fun main(args: Array<String>) {
     runBlocking {
         val context = runApplication<WorkerServerApplication>(*args)
-        context.getBean(JobQueueConsumer::class.java).consumeLoop()
+        val consumer = context.getBean(JobQueueConsumer::class.java)
+        consumer.startConsuming()
+        consumer.startKeepAlivePings()
         // 여기를 막아두면 JVM이 종료되지 않음
         awaitCancellation()
     }
