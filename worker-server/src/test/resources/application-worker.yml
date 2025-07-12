@@ -1,6 +1,6 @@
 spring:
   r2dbc:
-    url: r2dbc:mysql://localhost:23306/image_sprint
+    url: r2dbc:mysql://localhost:23306/test
     username: root
     password: 1234
     pool:
