@@ -18,7 +18,7 @@ import javax.imageio.ImageIO
 
 /**
  * 주어진 원본 이미지에 대해 리사이징, 압축, 포맷 변환, 워터마크 적용 등의 변환 작업을 수행하고,
- * 최종 결과 파일을 `/tmp/{jobId}/converted/` 디렉토리에 저장한 뒤, 변환된 파일의 크기를 반환합니다.
+ * 최종 결과 파일을 S3에 업로드하여 사용자로 하여 다운로드 할 수 있게 한다.
  *
  * 주요 처리 과정:
  * 1. 원본 파일 경로 및 결과 파일 경로 설정
@@ -90,7 +90,7 @@ class ImageProcessor {
 
             // 5. 변환된 이미지 크기 반환
             val convertedSize = finalFile.length()
-            logger.info("[Worker] Image processed: ${image.imageFileId}, size: $convertedSize")
+            logger.info("[Worker] Job Id: ${image.jobId} Image processed: ${image.imageFileId}, size: $convertedSize")
             Result.success(convertedSize)
         } catch (e: Exception) {
             logger.error("[Worker] Failed to process image: ${image.imageFileId}", e)
