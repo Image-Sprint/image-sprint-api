@@ -23,11 +23,7 @@ interface ReactiveJobRepository {
         doneCount: Int,
         convertedSize: Long,
         finishedAt: LocalDateTime,
+        expiredAt: LocalDateTime?,
         zipUrl: String,
-    )
-
-    suspend fun incrementProgress(
-        jobId: Long,
-        additionalSize: Long,
     )
 }

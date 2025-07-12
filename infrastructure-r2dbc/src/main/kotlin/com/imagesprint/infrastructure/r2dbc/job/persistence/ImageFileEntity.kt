@@ -1,4 +1,4 @@
-package com.imagesprint.infrastructure.job.persistence
+package com.imagesprint.infrastructure.r2dbc.job.persistence
 
 import com.imagesprint.core.domain.job.ImageFile
 import com.imagesprint.core.port.input.job.ConvertStatus
