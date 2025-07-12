@@ -4,9 +4,13 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.imagesprint.apiserver.controller.common.ApiResultResponse
 import com.imagesprint.apiserver.controller.common.BaseController
 import com.imagesprint.core.exception.CustomException
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -48,15 +52,28 @@ class GlobalExceptionHandler : BaseController() {
         return fail(status, errorCode.message)
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception::class)
-    fun handleGeneric(e: Exception): ApiResultResponse<Nothing?> {
+    fun handleGeneric(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        e: Exception,
+    ): ResponseEntity<ApiResultResponse<Nothing?>>? {
+        val isSseRequest = request.getHeader("Accept") == MediaType.TEXT_EVENT_STREAM_VALUE
+
         if (activeProfile == "local" || activeProfile == "dev") {
-            log.error("예상치 못한 예외 발생", e) // stack trace 포함
+            log.error("예상치 못한 예외 발생", e)
         } else {
-            log.error("예상치 못한 예외 발생: {}", e.message) // prod는 요약만
+            log.error("예상치 못한 예외 발생: {}", e.message)
         }
 
-        return fail(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러가 발생했습니다.")
+        return if (isSseRequest) {
+            ResponseEntity
+                .ok()
+                .contentType(MediaType.TEXT_EVENT_STREAM)
+                .body(null)
+        } else {
+            val errorResponse = fail(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러가 발생했습니다.")
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse)
+        }
     }
 }

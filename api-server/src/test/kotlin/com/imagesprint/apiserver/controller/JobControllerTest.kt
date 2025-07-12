@@ -1,15 +1,14 @@
 package com.imagesprint.apiserver.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.imagesprint.apiserver.consumer.JobProgressStreamConsumer
 import com.imagesprint.apiserver.controller.job.JobController
 import com.imagesprint.apiserver.controller.job.dto.CreateJobOptionRequest
 import com.imagesprint.apiserver.security.AuthenticatedUser
+import com.imagesprint.core.domain.job.Job
 import com.imagesprint.core.exception.CustomException
 import com.imagesprint.core.exception.ErrorCode
-import com.imagesprint.core.port.input.job.CreateJobUseCase
-import com.imagesprint.core.port.input.job.GetMyJobsUseCase
-import com.imagesprint.core.port.input.job.JobResult
-import com.imagesprint.core.port.input.job.WatermarkPosition
+import com.imagesprint.core.port.input.job.*
 import com.imagesprint.core.port.output.token.TokenProvider
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -27,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.multipart
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.time.LocalDateTime
 import kotlin.test.Test
 
@@ -44,6 +44,9 @@ class JobControllerTest {
 
     @MockkBean
     private lateinit var getMyJobsUseCase: GetMyJobsUseCase
+
+    @MockkBean
+    private lateinit var jobProgressStreamConsumer: JobProgressStreamConsumer
 
     @MockkBean
     private lateinit var tokenProvider: TokenProvider
@@ -68,46 +71,99 @@ class JobControllerTest {
         fun `컨트롤러 - 정상적으로 사용자의 Job 목록을 조회한다`() {
             // given
             val jobList =
-                listOf(
-                    JobResult(
-                        jobId = 101L,
-                        status = "PENDING",
-                        imageCount = 2,
-                        createdAt = LocalDateTime.now(),
-                        originalSize = 123456,
-                    ),
-                    JobResult(
-                        jobId = 102L,
-                        status = "COMPLETED",
-                        imageCount = 1,
-                        createdAt = LocalDateTime.now(),
-                        originalSize = 654321,
-                    ),
+                JobPage(
+                    jobs =
+                        listOf(
+                            Job(
+                                jobId = 101L,
+                                jobName = "Job-101",
+                                userId = userId,
+                                status = JobStatus.DONE,
+                                imageCount = 2,
+                                createdAt = LocalDateTime.now(),
+                                originalSize = 123456,
+                            ),
+                            Job(
+                                jobId = 102L,
+                                jobName = "Job-102",
+                                userId = userId,
+                                status = JobStatus.DONE,
+                                imageCount = 1,
+                                createdAt = LocalDateTime.now(),
+                                originalSize = 654321,
+                            ),
+                        ),
+                    hasNext = false,
+                    nextCursor = null,
                 )
-            every { getMyJobsUseCase.getMyJobs(userId) } returns jobList
+
+            val query =
+                GetJobPageQuery(
+                    userId = userId,
+                    cursor = null,
+                    pageSize = 10,
+                )
+
+            every { getMyJobsUseCase.getMyJobs(query) } returns jobList
 
             // when & then
             mockMvc.get("/api/v1/jobs").andExpect {
                 status { isOk() }
-                jsonPath("$.data.size()") { value(2) }
-                jsonPath("$.data[0].jobId") { value(101L) }
-                jsonPath("$.data[1].status") { value("COMPLETED") }
+                jsonPath("$.data.jobs.size()") { value(2) }
+                jsonPath("$.data.jobs[0].jobId") { value(101L) }
             }
 
-            verify(exactly = 1) { getMyJobsUseCase.getMyJobs(userId) }
+            verify(exactly = 1) { getMyJobsUseCase.getMyJobs(query) }
         }
 
         @Test
         fun `컨트롤러 - 조회 결과가 없으면 빈 리스트를 반환한다`() {
-            every { getMyJobsUseCase.getMyJobs(userId) } returns emptyList()
+            // given
+            val query =
+                GetJobPageQuery(
+                    userId = userId,
+                    cursor = null,
+                    pageSize = 10,
+                )
+            val jobList =
+                JobPage(
+                    jobs =
+                        emptyList(),
+                    hasNext = false,
+                    nextCursor = null,
+                )
+            every { getMyJobsUseCase.getMyJobs(query) } returns jobList
 
             mockMvc.get("/api/v1/jobs").andExpect {
                 status { isOk() }
-                jsonPath("$.data") { isArray() }
-                jsonPath("$.data.size()") { value(0) }
+                jsonPath("$.data.jobs") { isArray() }
+                jsonPath("$.data.jobs.size()") { value(0) }
             }
 
-            verify(exactly = 1) { getMyJobsUseCase.getMyJobs(userId) }
+            verify(exactly = 1) { getMyJobsUseCase.getMyJobs(query) }
+        }
+    }
+
+    @Nested
+    inner class StreamProgressTest {
+        @Test
+        fun `컨트롤러 - SSE 스트림 구독 요청시 SseEmitter를 반환한다`() {
+            // given
+            val emitter = SseEmitter(60_000L)
+            every { jobProgressStreamConsumer.subscribe(any()) } answers {
+                arg<SseEmitter>(0) // emitter 그대로 반환
+            }
+
+            // when & then
+            mockMvc
+                .get("/api/v1/jobs/progress/stream") {
+                    header("Accept", "text/event-stream")
+                }.andExpect {
+                    status { isOk() }
+                    // Content-Type은 실제 전송이 시작되기 전에는 설정되지 않기 때문에 생략
+                }
+
+            verify(exactly = 1) { jobProgressStreamConsumer.subscribe(any()) }
         }
     }
 

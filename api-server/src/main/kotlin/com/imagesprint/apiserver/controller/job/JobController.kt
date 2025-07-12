@@ -1,14 +1,17 @@
 package com.imagesprint.apiserver.controller.job
 
+import com.imagesprint.apiserver.consumer.JobProgressStreamConsumer
 import com.imagesprint.apiserver.controller.common.ApiResultResponse
 import com.imagesprint.apiserver.controller.common.ApiResultResponse.Companion.ok
 import com.imagesprint.apiserver.controller.common.ApiVersions
 import com.imagesprint.apiserver.controller.job.dto.CreateJobOptionRequest
+import com.imagesprint.apiserver.controller.job.dto.JobPageResponse
 import com.imagesprint.apiserver.controller.job.dto.JobResponse
 import com.imagesprint.apiserver.security.AuthenticatedUser
 import com.imagesprint.core.exception.CustomException
 import com.imagesprint.core.exception.ErrorCode
 import com.imagesprint.core.port.input.job.CreateJobUseCase
+import com.imagesprint.core.port.input.job.GetJobPageQuery
 import com.imagesprint.core.port.input.job.GetMyJobsUseCase
 import com.imagesprint.core.port.input.job.ImageUploadMeta
 import jakarta.validation.Valid
@@ -16,19 +19,33 @@ import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 
 @RestController
 @RequestMapping("${ApiVersions.V1}/jobs")
 class JobController(
     private val createJobUseCase: CreateJobUseCase,
     private val getMyJobsUseCase: GetMyJobsUseCase,
+    private val jobProgressStreamConsumer: JobProgressStreamConsumer,
 ) {
     @GetMapping
     fun getJobs(
         @AuthenticationPrincipal user: AuthenticatedUser,
-    ): ApiResultResponse<List<JobResponse>> {
-        val result = getMyJobsUseCase.getMyJobs(user.userId)
-        return ok(result.map { JobResponse.from(it) })
+        @RequestParam cursor: Long?,
+        @RequestParam(defaultValue = "10") pageSize: Int,
+    ): ApiResultResponse<JobPageResponse> {
+        val query = GetJobPageQuery(user.userId, cursor, pageSize)
+        val result = getMyJobsUseCase.getMyJobs(query)
+
+        return ok(JobPageResponse.from(result))
+    }
+
+    @GetMapping("/progress/stream")
+    fun stream(): SseEmitter {
+        val emitter = SseEmitter(1 * 70_000L) // 3분
+        jobProgressStreamConsumer.subscribe(emitter)
+
+        return emitter
     }
 
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])

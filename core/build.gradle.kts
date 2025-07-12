@@ -17,7 +17,6 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":common"))
 
     // 핵심 Spring API
     implementation("org.springframework:spring-tx:6.1.4")
@@ -25,7 +24,7 @@ dependencies {
 
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
     // Test
     testImplementation(kotlin("test")) // kotlin-test core
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")

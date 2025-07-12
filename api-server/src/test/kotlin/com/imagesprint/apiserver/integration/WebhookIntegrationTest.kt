@@ -6,7 +6,9 @@ import com.imagesprint.apiserver.support.WithMockAuthenticatedUser
 import com.imagesprint.core.domain.webhook.Webhook
 import com.imagesprint.core.domain.webhook.WebhookType
 import com.imagesprint.core.port.output.webhook.WebhookRepository
-import com.imagesprint.infrastructure.common.DatabaseCleaner
+import com.imagesprint.infrastructure.jpa.common.DatabaseCleaner
+import com.imagesprint.infrastructure.redis.subscriber.RedisJobProgressSubscriber
+import com.ninjasquad.springmockk.MockkBean
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -36,6 +38,9 @@ class WebhookIntegrationTest {
 
     @Autowired
     private lateinit var databaseCleaner: DatabaseCleaner
+
+    @MockkBean
+    lateinit var redisJobProgressSubscriber: RedisJobProgressSubscriber
 
     @BeforeEach
     fun setup() {

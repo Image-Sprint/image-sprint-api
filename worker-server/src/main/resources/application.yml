@@ -23,11 +23,12 @@ spring:
     password: 1234
     pool:
       enabled: true
-      max-size: 10
-      initial-size: 2
-  sql:
-    init:
-      mode: always
+      initial-size: 5                 # minimum-idle: 초기 연결 수
+      max-size: 10                    # maximum-pool-size
+      max-idle-time: 30s             # idle-timeout: 30초 (idle 커넥션 제거 기준)
+      max-life-time: 295s            # max-lifetime: 커넥션의 최대 생존 시간
+      validation-query: SELECT 1     # validation-timeout과 유사하게 커넥션 상태 확인
+
   data:
     redis:
       host: localhost
@@ -36,7 +37,7 @@ spring:
 logging:
   level:
     root: info
-    io.r2dbc: debug
+    io.r2dbc: info
 
 ---
 

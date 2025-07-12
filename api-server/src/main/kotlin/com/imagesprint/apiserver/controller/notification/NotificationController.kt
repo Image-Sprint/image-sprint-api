@@ -3,7 +3,7 @@ package com.imagesprint.apiserver.controller.notification
 import com.imagesprint.apiserver.controller.common.ApiResultResponse
 import com.imagesprint.apiserver.controller.common.ApiResultResponse.Companion.ok
 import com.imagesprint.apiserver.controller.common.ApiVersions
-import com.imagesprint.apiserver.controller.user.dto.NotificationPageResponse
+import com.imagesprint.apiserver.controller.notification.dto.NotificationPageResponse
 import com.imagesprint.apiserver.security.AuthenticatedUser
 import com.imagesprint.core.port.input.notification.GetNotificationPageQuery
 import com.imagesprint.core.port.input.notification.NotificationQueryUseCase

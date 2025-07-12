@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":common"))
     implementation(project(":infrastructure-jpa"))
+    implementation(project(":infrastructure-redis"))
 
     // web & sse
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -32,6 +33,7 @@ dependencies {
 
     // kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
     // OAuth2
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
