@@ -67,10 +67,8 @@ class GlobalExceptionHandler : BaseController() {
         }
 
         return if (isSseRequest) {
-            ResponseEntity
-                .ok()
-                .contentType(MediaType.TEXT_EVENT_STREAM)
-                .body(null)
+            log.warn("SSE 요청 중 예외 발생")
+            null
         } else {
             val errorResponse = fail(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러가 발생했습니다.")
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse)
