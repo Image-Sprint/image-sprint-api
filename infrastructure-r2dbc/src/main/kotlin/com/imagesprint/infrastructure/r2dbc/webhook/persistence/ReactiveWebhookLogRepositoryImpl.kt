@@ -18,7 +18,7 @@ class ReactiveWebhookLogRepositoryImpl(
             VALUES (:webhookId, :responseCode, :responseMessage, :payload, :isSuccess, :sentAt)
             """,
             ).bind("webhookId", log.webhookId)
-            .bind("responseCode", log.responseCode.name)
+            .bind("responseCode", log.responseCode)
             .bind("responseMessage", log.responseMessage)
             .bind("payload", log.payload)
             .bind("isSuccess", log.isSuccess)

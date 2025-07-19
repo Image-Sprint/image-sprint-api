@@ -19,7 +19,7 @@ class WebhookRepositoryImpl(
         userId: Long,
         webhookId: Long,
     ): Boolean {
-        val deletedCount = webhookJpaRepository.deleteByWebhookIdAndUserId(userId, webhookId)
+        val deletedCount = webhookJpaRepository.deleteByWebhookIdAndUserId(webhookId, userId)
 
         return deletedCount > 0
     }
