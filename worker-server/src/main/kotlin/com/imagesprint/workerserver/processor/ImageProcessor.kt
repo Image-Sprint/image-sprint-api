@@ -108,10 +108,10 @@ class ImageProcessor {
         val graphics: Graphics2D = image.createGraphics()
 
         val font =
-            Font("Arial", Font.BOLD, 36).takeIf { it.canDisplayUpTo(text) == -1 }
+            Font("Arial", Font.BOLD, 18).takeIf { it.canDisplayUpTo(text) == -1 }
                 ?: Font("SansSerif", Font.BOLD, 36)
         graphics.font = font
-        graphics.color = Color.WHITE
+        graphics.color = Color.BLACK
         graphics.composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity)
 
         val fontMetrics = graphics.fontMetrics
