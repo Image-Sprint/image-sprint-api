@@ -10,7 +10,6 @@ import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.data.redis.listener.PatternTopic
 import org.springframework.data.redis.listener.ReactiveRedisMessageListenerContainer
 import org.springframework.stereotype.Component
-import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks
 
 @Component
@@ -44,6 +43,5 @@ class RedisJobProgressSubscriber(
     override fun subscribeAll(): Flow<JobProgressResult> =
         sink
             .asFlux()
-            .concatWith(Mono.never()) // 스트림이 끝나지 않도록 처리
             .asFlow()
 }
