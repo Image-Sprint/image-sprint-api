@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import software.amazon.awssdk.http.HttpStatusCode
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -45,7 +46,7 @@ class DefaultWebhookSender(
 
             WebhookLog(
                 webhookId = webhook.webhookId!!,
-                responseCode = webhook.type,
+                responseCode = response.statusCode(),
                 responseMessage = response.body(),
                 payload = message,
                 isSuccess = response.statusCode() in 200..299,
@@ -55,7 +56,7 @@ class DefaultWebhookSender(
             logger.error("[Webhook] Failed to send to ${webhook.url}", e)
             WebhookLog(
                 webhookId = webhook.webhookId!!,
-                responseCode = webhook.type,
+                responseCode = HttpStatusCode.INTERNAL_SERVER_ERROR,
                 responseMessage = e.message ?: "Unknown error",
                 payload = message,
                 isSuccess = false,

@@ -14,7 +14,6 @@ fun main(args: Array<String>) {
         val context = runApplication<WorkerServerApplication>(*args)
         val consumer = context.getBean(JobQueueConsumer::class.java)
         consumer.startConsuming()
-        consumer.startKeepAlivePings()
         // 여기를 막아두면 JVM이 종료되지 않음
         awaitCancellation()
     }

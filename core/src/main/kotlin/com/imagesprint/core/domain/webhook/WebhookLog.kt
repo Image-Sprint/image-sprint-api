@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 data class WebhookLog(
     val webhookLogId: Long? = null,
     val webhookId: Long,
-    val responseCode: WebhookType,
+    val responseCode: Int,
     val responseMessage: String,
     val payload: String,
     val isSuccess: Boolean,

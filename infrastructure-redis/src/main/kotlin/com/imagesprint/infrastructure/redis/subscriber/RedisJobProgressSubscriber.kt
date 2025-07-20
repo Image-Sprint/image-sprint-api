@@ -40,5 +40,8 @@ class RedisJobProgressSubscriber(
             }
     }
 
-    override fun subscribeAll(): Flow<JobProgressResult> = sink.asFlux().asFlow()
+    override fun subscribeAll(): Flow<JobProgressResult> =
+        sink
+            .asFlux()
+            .asFlow()
 }

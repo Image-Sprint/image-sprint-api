@@ -89,7 +89,7 @@ class JobProcessor(
                 results =
                     images
                         .map { image ->
-                            async(Dispatchers.IO) {
+                            async(Dispatchers.Default) {
                                 val result = imageProcessor.processImage(jobId, image, option)
 
                                 if (result.isSuccess) {

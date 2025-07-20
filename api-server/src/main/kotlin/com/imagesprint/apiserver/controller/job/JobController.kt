@@ -15,6 +15,7 @@ import com.imagesprint.core.port.input.job.GetJobPageQuery
 import com.imagesprint.core.port.input.job.GetMyJobsUseCase
 import com.imagesprint.core.port.input.job.ImageUploadMeta
 import jakarta.validation.Valid
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -28,6 +29,8 @@ class JobController(
     private val getMyJobsUseCase: GetMyJobsUseCase,
     private val jobProgressStreamConsumer: JobProgressStreamConsumer,
 ) {
+    private val logger = LoggerFactory.getLogger(JobController::class.java)
+
     @GetMapping
     fun getJobs(
         @AuthenticationPrincipal user: AuthenticatedUser,
@@ -40,9 +43,9 @@ class JobController(
         return ok(JobPageResponse.from(result))
     }
 
-    @GetMapping("/progress/stream")
+    @GetMapping("/progress/stream", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun stream(): SseEmitter {
-        val emitter = SseEmitter(1 * 70_000L) // 3분
+        val emitter = SseEmitter(3 * 60_000L) // 3분
         jobProgressStreamConsumer.subscribe(emitter)
 
         return emitter
