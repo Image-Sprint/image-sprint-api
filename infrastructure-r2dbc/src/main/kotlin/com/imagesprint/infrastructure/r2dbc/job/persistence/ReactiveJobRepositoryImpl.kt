@@ -39,6 +39,20 @@ class ReactiveJobRepositoryImpl(
             .one()
             .awaitFirstOrNull()
 
+    override suspend fun incrementDoneCount(jobId: Long) {
+        client
+            .sql(
+                """
+                UPDATE job
+                SET done_count = COALESCE(done_count, 0) + 1
+                WHERE job_id = :jobId
+                """.trimIndent(),
+            ).bind("jobId", jobId)
+            .fetch()
+            .rowsUpdated()
+            .awaitFirstOrNull()
+    }
+
     override suspend fun updateStatus(
         jobId: Long,
         status: JobStatus,

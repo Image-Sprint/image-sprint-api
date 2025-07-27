@@ -25,14 +25,9 @@ class JobProgressRedisPublisher(
             objectMapper.writeValueAsString(
                 JobProgressResult(jobId, done, total),
             )
-//        log.warn("🔥 RedisPublisher.publish() called!")
-//        log.info("📤 [Redis] Publishing job progress: jobId=$jobId, $done/$total -> $payload")
-
         return redisTemplate
             .convertAndSend(topic.topic, payload)
-            .doOnSuccess { count ->
-//                log.info("✅ [Redis] Message sent to $count subscriber(s) for jobId=$jobId")
-            }.doOnError { e ->
+            .doOnError { e ->
                 log.error("❌ [Redis] Failed to publish progress for jobId=$jobId", e)
             }
     }
