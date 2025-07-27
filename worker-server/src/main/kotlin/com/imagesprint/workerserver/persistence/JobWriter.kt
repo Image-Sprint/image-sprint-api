@@ -22,6 +22,10 @@ class JobWriter(
         imageRepository.updateConvertedSize(imageFileId, convertedSize)
     }
 
+    suspend fun incrementDoneCount(jobId: Long) {
+        jobRepository.incrementDoneCount(jobId)
+    }
+
     suspend fun summarize(
         jobId: Long,
         status: JobStatus,

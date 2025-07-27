@@ -17,6 +17,8 @@ interface ReactiveJobRepository {
         createdAt: LocalDateTime,
     )
 
+    suspend fun incrementDoneCount(jobId: Long)
+
     suspend fun updateSummary(
         jobId: Long,
         status: JobStatus,
