@@ -1,9 +1,80 @@
+# 공통 설정
 spring:
+  main:
+    web-application-type: none #  웹서버 비활성화
+  application:
+    name: image-sprint-worker
+  profiles:
+    default: local
+    include: secret, worker
+
+storage:
+  temp-path: /shared/tmp
+---
+
+# Local 환경 (R2DBC + Redis)
+spring:
+  config:
+    activate:
+      on-profile: local
   r2dbc:
     url: r2dbc:mysql://localhost:23306/image_sprint
     username: root
     password: 1234
+    pool:
+      enabled: true
+      initial-size: 5                 # minimum-idle: 초기 연결 수
+      max-size: 10                    # maximum-pool-size
+      max-idle-time: 30s             # idle-timeout: 30초 (idle 커넥션 제거 기준)
+      max-life-time: 295s            # max-lifetime: 커넥션의 최대 생존 시간
+      validation-query: SELECT 1     # validation-timeout과 유사하게 커넥션 상태 확인
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 logging:
   level:
-    io.r2dbc: debug
+    root: info
+    io.r2dbc: info
+
+---
+
+# Dev 환경
+spring:
+  config:
+    activate:
+      on-profile: dev
+  r2dbc:
+    url:
+    username:
+    password:
+  data:
+    redis:
+      host:
+      port:
+
+---
+
+# Prod 환경
+spring:
+  config:
+    activate:
+      on-profile: prod
+  r2dbc:
+    url:
+    username:
+    password:
+  data:
+    redis:
+      host:
+      port:
+
+---
+
+# Worker 전용 빈 활성화 조건
+spring:
+  config:
+    activate:
+      on-profile: worker

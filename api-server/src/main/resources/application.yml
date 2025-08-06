@@ -1,10 +1,36 @@
+# 공통 설정 (모든 프로필 공통 적용)
 spring:
+  application:
+    name: image-sprint
+  profiles:
+    default: local
+    include: secret, api
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 1GB
+
+server:
+  tomcat:
+    max-part-count: 50
+  port: 8080
+
+storage:
+  temp-path: /shared/tmp
+---
+
+# Local 환경 (개발용 API 서버)
+spring:
+  config:
+    activate:
+      on-profile: local
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     url: jdbc:mysql://localhost:23306/image_sprint
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -12,7 +38,71 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 logging:
   level:
+    org.springframework: info
     org.hibernate.SQL: debug
+    io.r2dbc: debug
+
+---
+
+# Dev 환경 (개발 서버용 API)
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  data:
+    redis:
+      host:
+      port:
+
+logging:
+  level:
+    root: info
+
+---
+
+# Prod 환경 (운영용 API)
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  data:
+    redis:
+      host:
+      port:
+
+logging:
+  level:
+    root: warn
+
+---
+
+# API 전용 빈 활성화 조건
+spring:
+  config:
+    activate:
+      on-profile: api

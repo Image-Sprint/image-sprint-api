@@ -33,6 +33,10 @@ out/
 /nbdist/
 /.nb-gradle/
 
+### ymls ###
+api-server/**/application-secret.yml
+worker-server/**/application-secret.yml
+
 ### VS Code ###
 .vscode/
 

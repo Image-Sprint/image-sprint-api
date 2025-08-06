@@ -1,3 +1,11 @@
 rootProject.name = "image-sprint"
 
-include("core", "api-server", "worker-server", "infrastructure", "common")
+include(
+    "common",
+    "core",
+    "api-server",
+    "worker-server",
+    "infrastructure-jpa",
+    "infrastructure-r2dbc",
+    "infrastructure-redis",
+)
